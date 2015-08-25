@@ -1,5 +1,5 @@
 # Basic Boilerplate
-======
+
 > This is a simple boilerplate using Grunt & Assemble
 
 This boilerplate enforces very few conventions and can be pieces can be swapped out as needed. Here's a list of what comes by default:
@@ -17,7 +17,7 @@ This boilerplate enforces very few conventions and can be pieces can be swapped 
 
 
 ## Setup
-======
+
 1. Clone/download repo
 2. Run `cp build-env.js-dist build-env.js` to make a local copy of the build environment variables
 3. Run `npm install -g grunt-cli`
@@ -31,5 +31,5 @@ This boilerplate enforces very few conventions and can be pieces can be swapped 
 
 
 ## Errors or want changes?
-======
+
 Submit an issue or pull request. 
