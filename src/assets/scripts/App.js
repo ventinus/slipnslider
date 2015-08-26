@@ -1,5 +1,5 @@
 export default class App {
     constructor() {
-        console.log('womp');
+        console.log('Your JavaScript is hooked up!');
     }
 }

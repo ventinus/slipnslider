@@ -29,6 +29,14 @@ This boilerplate enforces very few conventions and can be pieces can be swapped 
 9. Optionally run `grunt watch` to watch for changes
 
 
+## Production Builds
+Want to build for production? Run `grunt --prod` and the following will occur:
+- CSS will be minified
+- JS will run through the r.js optimizer and be minified into one `main.js` file.
+- `foot.hbs` markup will output adjust ouput for production.
+
+Need to check for production in your Handlebars templates? Simply use an `{{#if production}}` block to output content for production.
+
 
 ## Errors or want changes?
 
