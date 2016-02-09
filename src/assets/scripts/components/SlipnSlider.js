@@ -1,5 +1,3 @@
-// TODO: setup form fields for customizing the slider
-
 export default class SlipnSlider {
   constructor(element, options) {
     /**
@@ -18,7 +16,7 @@ export default class SlipnSlider {
     this.optionableProperties = {
       isInfinite: false,
       hasDotNav: true,
-      slidePadding: 0,
+      hasControls: true,
       navContainer: '.slipnslider',
       dotsContainer: '.slipnslider',
       slideElement: 'div',
@@ -243,10 +241,8 @@ export default class SlipnSlider {
    * appends dotNav to the slider
    * @return {SlipnSlider}
    */
-  createDots(element) {
-    if (!this.hasDotNav || this.total === 1) {
-      return this;
-    }
+  createDots() {
+    if (!this.hasDotNav || this.total === 1) { return this; }
     let targetElement = document.querySelector(this.dotsContainer);
 
     this.dotNav = document.createElement("ul");
@@ -266,10 +262,10 @@ export default class SlipnSlider {
    * wrapping element and appends the prev and next
    * buttons as children and caches them as properties
    * of the slider.
-   * @param  {String} element CSS Selector for desired element to append controls
    * @return {SlipnSlider}
    */
-  createControls(element) {
+  createControls() {
+    if (!this.hasControls || this.total  === 1) { return this; }
     let targetElement = document.querySelector(this.navContainer);
     let controlsWrapper = document.createElement("div");
     controlsWrapper.className = "slipnslider__controls";
@@ -312,13 +308,17 @@ export default class SlipnSlider {
 
     this.isEnabled = true;
 
-    this.nextBtn.addEventListener("click", this.onNextClickHandler);
-    this.prevBtn.addEventListener("click", this.onPrevClickHandler);
+    if (this.hasControls) {
+      this.nextBtn.addEventListener("click", this.onNextClickHandler);
+      this.prevBtn.addEventListener("click", this.onPrevClickHandler);
+    }
+
     if (this.hasDotNav) {
       for (let i = 0, j = this.navDots.length; i < j; i++) {
         this.navDots[i].addEventListener("click", this.onDotClickHandler)
       }
     }
+
     this.stage.addEventListener(this.pressStart, this.onDragStartHandler);
     window.addEventListener(this.pressMove, this.onDragHandler);
     window.addEventListener(this.pressEnd, this.offDragHandler);
@@ -338,8 +338,11 @@ export default class SlipnSlider {
 
     this.isEnabled = false;
 
-    this.nextBtn.removeEventListener("click", this.onNextClickHandler);
-    this.prevBtn.removeEventListener("click", this.onPrevClickHandler);
+    if (this.hasControls) {
+      this.nextBtn.removeEventListener("click", this.onNextClickHandler);
+      this.prevBtn.removeEventListener("click", this.onPrevClickHandler);
+    }
+
     if (this.hasDotNav) {
       for (let i = 0, j = this.navDots.length; i < j; i++) {
         this.navDots[i].removeEventListener("click", this.onDotClickHandler)
@@ -360,7 +363,10 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   removeCreatedElements() {
-    this.prevBtn.parentElement.remove();
+    if (this.hasControls) {
+      this.prevBtn.parentElement.remove();
+    }
+
     if (this.hasDotNav) { this.dotNav.remove(); }
 
     if (this.isInfinite) {

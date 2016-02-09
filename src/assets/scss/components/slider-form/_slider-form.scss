@@ -1,0 +1,27 @@
+.slider-form {
+  width: 50%;
+  margin: 30px auto 0;
+  border: 2px solid #a82bde;
+  padding: 30px;
+  border-radius: 40px;
+}
+
+.slider-form select {
+  appearance: none;
+  padding: 5px;
+}
+
+.slider-form input[type="submit"] {
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.slider-form > * {
+  display: block;
+  width: 100%;
+}
+
+.slider-form > * + * {
+  margin-top: 15px;
+}
