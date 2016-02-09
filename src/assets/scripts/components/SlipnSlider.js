@@ -20,7 +20,8 @@ export default class SlipnSlider {
       navContainer: '.slipnslider',
       dotsContainer: '.slipnslider',
       slideElement: 'div',
-      stageElement: 'div'
+      stageElement: 'div',
+      slidePadding: 20
     }
 
     /**
@@ -188,6 +189,7 @@ export default class SlipnSlider {
     this.stage.appendChild(firstSlide);
     this.stage.insertBefore(lastSlide, this.slides[0]);
     this.slides     = this.stage.children;
+    this.addSlidePadding();
     this.total      = this.slides.length;
     this.percent    = 100 / this.total;
     this.activeSlideIndex = 1;
@@ -229,9 +231,17 @@ export default class SlipnSlider {
       this.stage.appendChild(slide);
     }
     this.slides = this.stage.children;
+    this.addSlidePadding();
     this.slider.appendChild(this.stage);
     this.stage = this.slider.children[0];
 
+    return this;
+  }
+
+  addSlidePadding() {
+    Array.prototype.forEach.call(this.slides, (slide) => {
+      slide.style.marginLeft = `${this.slidePadding}px`;
+    }.bind(this))
     return this;
   }
 
@@ -396,10 +406,12 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   defineSizes() {
-    this.stage.style.width = `${this.slider.offsetWidth * this.total}px`;
+    let totalPadding = (this.total - 1) * this.slidePadding;
+    this.stage.style.width = `${(this.slider.offsetWidth * this.total) + totalPadding}px`;
     this.dragThreshold = this.slider.offsetWidth / 4;
+    let additionalWidth = ((this.total - 1) * this.slidePadding) / this.total;
     Array.prototype.forEach.call(this.slides, (slide) => {
-      slide.style.width = `${this.percent}%`;
+      slide.style.width = `${this.slider.offsetWidth}px`;
     });
     return this;
   }
@@ -505,17 +517,18 @@ export default class SlipnSlider {
       window.scrollTo(document.body.scrollLeft, document.body.scrollTop + (this.curYPos - e.pageY));
     }
 
-    let currentPos = (this.activeSlideIndex) * -this.percent;
-    let movePos   = (currentPos + ((this.startpoint - e.pageX) * 0.03) * -1);
+    let currentPos  = ((this.activeSlideIndex * this.slider.offsetWidth) + (this.slidePadding * this.activeSlideIndex)) * -1;
+    let movePos     = currentPos - ((this.startpoint - e.pageX) * 0.7);
+
     if (!this.isInfinite) {
       if (movePos >= 0) {
         movePos = 0;
-      } else if (movePos <= (100 - 100/this.total) * -1) {
-        movePos = (100 - 100/this.total) * -1;
+      } else if (movePos <= -this.stage.offsetWidth + this.slider.offsetWidth) {
+        movePos = -this.stage.offsetWidth + this.slider.offsetWidth;
       }
     }
 
-    this.stage.style[this.transformPrefix] = `translate3d(${movePos}%, 0, 0)`;
+    this.stage.style[this.transformPrefix] = `translate3d(${movePos}px, 0, 0)`;
 
     return this;
   }
@@ -594,7 +607,7 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   navigateToSlide() {
-    let moveTo = `${this.activeSlideIndex * this.percent}%`;
+    let moveTo = `${(this.activeSlideIndex * this.slider.offsetWidth) + (this.slidePadding * this.activeSlideIndex)}px`;
     this.stage.style[this.transformPrefix] = `translate3d(-${moveTo},0,0)`;
     if (this.hasDotNav) {
       this.activeDot.className = "";
