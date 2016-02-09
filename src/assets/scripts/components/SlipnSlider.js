@@ -21,7 +21,7 @@ export default class SlipnSlider {
       dotsContainer: '.slipnslider',
       slideElement: 'div',
       stageElement: 'div',
-      slidePadding: 20
+      slidePadding: 10
     }
 
     /**
@@ -46,7 +46,7 @@ export default class SlipnSlider {
      * Calculation of the width of each slide in percent
      * @type {Number}
      */
-    this.percent = 0;
+    this.slideWidth = this.slider.offsetWidth;
 
     /**
      * Index number of the current active slide
@@ -189,9 +189,7 @@ export default class SlipnSlider {
     this.stage.appendChild(firstSlide);
     this.stage.insertBefore(lastSlide, this.slides[0]);
     this.slides     = this.stage.children;
-    this.addSlidePadding();
     this.total      = this.slides.length;
-    this.percent    = 100 / this.total;
     this.activeSlideIndex = 1;
 
     return this;
@@ -220,28 +218,20 @@ export default class SlipnSlider {
     this.stage.className = "slipnslider__stage";
     this.slides = this.slider.children;
     this.total = this.slides.length;
-    this.percent = 100 / this.total;
+    this.slideWidth = this.slider.offsetWidth;
     for (let i = 0; i < this.total; i++) {
       let slide  = document.createElement(this.slideElement);
       for (let j = 0, h = this.slides[0].children.length; j < h; j++) {
         slide.appendChild(this.slides[0].children[0]);
       }
       this.slides[0].remove();
-      slide.style.width = `${this.percent}%`;
+      slide.style.width = `${this.slideWidth}%`;
       this.stage.appendChild(slide);
     }
     this.slides = this.stage.children;
-    this.addSlidePadding();
     this.slider.appendChild(this.stage);
     this.stage = this.slider.children[0];
 
-    return this;
-  }
-
-  addSlidePadding() {
-    Array.prototype.forEach.call(this.slides, (slide) => {
-      slide.style.marginLeft = `${this.slidePadding}px`;
-    }.bind(this))
     return this;
   }
 
@@ -412,7 +402,8 @@ export default class SlipnSlider {
     let additionalWidth = ((this.total - 1) * this.slidePadding) / this.total;
     Array.prototype.forEach.call(this.slides, (slide) => {
       slide.style.width = `${this.slider.offsetWidth}px`;
-    });
+      slide.style.marginLeft = `${this.slidePadding}px`;
+    }.bind(this));
     return this;
   }
 
