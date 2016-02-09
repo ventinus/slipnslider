@@ -1,4 +1,4 @@
-// TODO: reset position when drag isnt enough to trigger slide change
+// TODO: setup form fields for customizing the slider
 
 export default class SlipnSlider {
   constructor(element, options) {
@@ -36,12 +36,6 @@ export default class SlipnSlider {
      * @type {String}
      */
     this.slider = element;
-
-    /**
-     * Cache selector for main slider element
-     * @type {DOM element}
-     */
-    // this.slider = document.querySelector(instanceClass);
 
     /**
      * The amount of slides in slider
@@ -229,7 +223,7 @@ export default class SlipnSlider {
     this.percent = 100 / this.total;
     for (let i = 0; i < this.total; i++) {
       let slide  = document.createElement(this.slideElement);
-      for (let j = 0; j < this.slides[0].children.length; j++) {
+      for (let j = 0, h = this.slides[0].children.length; j < h; j++) {
         slide.appendChild(this.slides[0].children[0]);
       }
       this.slides[0].remove();
@@ -533,8 +527,10 @@ export default class SlipnSlider {
     this.isDragging = false;
     this.stage.style[this.transitionPrefix] = "all .75s";
     let travelled = this.startpoint - e.pageX;
-    if (Math.abs(travelled) >= 30) {
+    if (Math.abs(travelled) >= this.dragThreshold) {
       (travelled < 0) ? this.moveToAdjacentSlide(false) : this.moveToAdjacentSlide(true);
+    } else {
+      this.navigateToSlide();
     }
 
     return this;
@@ -695,6 +691,11 @@ export default class SlipnSlider {
     }
   }
 
+  /**
+   * Retrieves the correct transition prefix with what
+   * exists in the users browser
+   * @return {String} Transition Prefix
+   */
   transitionPrefix() {
     let t;
     let el = document.createElement('fakeelement');
@@ -712,6 +713,11 @@ export default class SlipnSlider {
     }
   }
 
+  /**
+   * Retrieves the correct transform prefix
+   * with what exists in the users browser
+   * @return {String} Transform Prefix
+   */
   transformPrefix() {
     let t;
     let el = document.createElement('fakeelement');

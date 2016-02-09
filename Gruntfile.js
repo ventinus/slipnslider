@@ -30,7 +30,7 @@ module.exports = function(grunt) {
             options: {
                 force: '<%= env.UNSAFE_MODE %>'
             },
-            dest: ['<%= env.DIR_DEST %>'],
+            dest: ['<%= env.DIR_DEST %>', '../ventinus.github.io/slipnslider/web'],
             docs: ['<%= env.DIR_DOCS %>'],
             tmp: ['<%= env.DIR_TMP %>'],
             installed: [
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', 'Run default tasks for the target environment.', ['build']);
 
     grunt.registerTask('build', 'Compile source code and outputs to destination.',
-        ['clean:dest', 'buildMarkup', 'buildStatic', 'buildStyles', 'buildScripts', 'clean:tmp']
+        ['clean:dest', 'buildMarkup', 'buildStatic', 'buildStyles', 'buildScripts', 'clean:tmp', 'copyWeb']
     );
 
     grunt.registerTask('lint', 'Validate code syntax.',
