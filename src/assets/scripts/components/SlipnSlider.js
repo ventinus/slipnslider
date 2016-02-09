@@ -1,3 +1,6 @@
+// Features to add:
+//  autoplay
+
 export default class SlipnSlider {
   constructor(element, options) {
     /**
@@ -512,10 +515,12 @@ export default class SlipnSlider {
     let movePos     = currentPos - ((this.startpoint - e.pageX) * 0.7);
 
     if (!this.isInfinite) {
-      if (movePos >= 0) {
-        movePos = 0;
-      } else if (movePos <= -this.stage.offsetWidth + this.slider.offsetWidth) {
-        movePos = -this.stage.offsetWidth + this.slider.offsetWidth;
+      // Dividing by 4 and multiplying by 0.75 allows a
+      // peek over either end by a quarter of slide width
+      if (movePos >= this.slider.offsetWidth / 4) {
+        movePos = this.slider.offsetWidth / 4;
+      } else if (movePos <= -this.stage.offsetWidth + (this.slider.offsetWidth * 0.75)) {
+        movePos = -this.stage.offsetWidth + (this.slider.offsetWidth * 0.75);
       }
     }
 
@@ -538,7 +543,13 @@ export default class SlipnSlider {
     this.stage.style[this.transitionPrefix] = "all .75s";
     let travelled = this.startpoint - e.pageX;
     if (Math.abs(travelled) >= this.dragThreshold) {
-      (travelled < 0) ? this.moveToAdjacentSlide(false) : this.moveToAdjacentSlide(true);
+      if (travelled < 0 && !this.atFirstSlide()) {
+        this.moveToAdjacentSlide(false);
+      } else if (travelled > 0 && !this.atLastSlide()) {
+        this.moveToAdjacentSlide(true);
+      } else {
+        this.navigateToSlide();
+      }
     } else {
       this.navigateToSlide();
     }
