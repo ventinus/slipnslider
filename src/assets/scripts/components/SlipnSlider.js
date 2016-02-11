@@ -447,7 +447,10 @@ export default class SlipnSlider {
     return this;
   }
 
+
   onKeyDown(e) {
+    // might want to have a debounce to limit calls but behaves
+    // as anticipated and isnt too overloading
     if (event.keyCode === 37) {
       this.moveToAdjacentSlide(false);
     } else if (e.keyCode === 39) {
@@ -503,6 +506,11 @@ export default class SlipnSlider {
    */
   onDragStart(e) {
     if (this.isTransitioning) { return this; }
+
+    // if( navigator.userAgent.match(/Android/i) ) {
+    //   e.preventDefault();
+    // }
+
     this.removeStageTransition();
     this.startpoint = e.pageX;
     this.isDragging = true;
