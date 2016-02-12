@@ -2,6 +2,8 @@
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
 
+// REminder for later: figure out how to handle slide swapping with multiple
+// slides while isInfinite
 export default class SlipnSlider {
   constructor(element, options) {
     /**
@@ -18,7 +20,7 @@ export default class SlipnSlider {
      * @type {Object}
      */
     this.optionableProperties = {
-      isInfinite: true,
+      isInfinite: false,
       hasDotNav: true,
       hasControls: true,
       navContainer: '.slipnslider',
@@ -54,6 +56,7 @@ export default class SlipnSlider {
     this.slideWidth = 0;
     this.dotsCount = 0;
     this.upperBounds = 0;
+    this.slideBy = 0;
 
     /**
      * Index number of the current active slide
@@ -204,23 +207,6 @@ export default class SlipnSlider {
   }
 
   /**
-   * Adds data attributes to the slides of an index
-   * number that corresponds with a dot.
-   * @return {SlipnSlider}
-   */
-  setDataAttrs() {
-    for (let i = 0, dotNum = 0; i < this.total; i++) {
-      this.slides[i].dataset.jsSlideIndex = dotNum;
-      if (dotNum < this.dotsCount - 1) {
-        dotNum++;
-      } else {
-        dotNum = 0;
-      }
-    }
-    return this;
-  }
-
-  /**
    * Wraps the slides with the stage and appends it
    * to the slider. Updates the values of slide elements,
    * total count, percentage, and sets the width of the slides.
@@ -318,8 +304,8 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   addEventHandlers() {
-    this.onNextClickHandler = this.moveToAdjacentSlide.bind(this, true);
-    this.onPrevClickHandler = this.moveToAdjacentSlide.bind(this, false);
+    this.onNextClickHandler = this.determineAction.bind(this, true);
+    this.onPrevClickHandler = this.determineAction.bind(this, false);
     this.onDotClickHandler  = this.onDotClick.bind(this);
     this.onDragStartHandler = this.onDragStart.bind(this);
     this.onDragHandler      = this.onDrag.bind(this);
@@ -429,13 +415,11 @@ export default class SlipnSlider {
    */
   defineSizes() {
     let totalPadding = (this.total - 1) * this.slidePadding;
-    this.slideWidth = this.slider.offsetWidth / this.slidesPerPage;
+    this.slideWidth = Math.ceil((this.slider.offsetWidth - (this.slidePadding * (this.slidesPerPage - 1)) ) / this.slidesPerPage);
     let stageWidth = (this.total * this.slideWidth) + totalPadding;
     this.stage.style.width = `${stageWidth}px`;
     this.dragThreshold = this.slider.offsetWidth / 4;
-
-    // TODO: Needs to incorporate the slidePadding somehow
-    this.upperBounds = stageWidth - (this.slidesPerPage * this.slideWidth);
+    this.slideBy = this.slideWidth + this.slidePadding;
 
     Array.prototype.forEach.call(this.slides, (slide) => {
       slide.style.width = `${this.slideWidth}px`;
@@ -453,20 +437,23 @@ export default class SlipnSlider {
    * @param  {Event Obj} e       Optional event data
    * @return {SlipnSlider}
    */
-  moveToAdjacentSlide(direction, e) {
+  determineAction(direction, e) {
     if (this.isTransitioning) { return this; }
     this.onTransitionStart();
-    if (!this.isInfinite) {
-      if (direction && this.atLastSlide()) {
-        this.activeSlideIndex = 0;
-      } else if (!direction && this.atFirstSlide()) {
-        this.activeSlideIndex = this.total - 1;
-      } else {
-        direction ? this.activeSlideIndex++ : this.activeSlideIndex--;
-      }
+
+    if (direction && this.atLastSlide()) {
+      this.activeDotIndex = 0;
+      (!this.isInfinite) ? this.activeSlideIndex = 0 : this.activeSlideIndex++;
+    } else if (!direction && this.atFirstSlide()) {
+      this.activeDotIndex = this.dotsCount - 1;
+      (!this.isInfinite) ? this.activeSlideIndex = this.dotsCount - 1 : this.activeSlideIndex--;
+      // Using dotsCount because total will cause it to navigate beyond the slides
+      // when multiple slides per page
     } else {
       direction ? this.activeSlideIndex++ : this.activeSlideIndex--;
+      direction ? this.activeDotIndex++ : this.activeDotIndex--;
     }
+
     this.navigateToSlide();
     return this;
   }
@@ -486,22 +473,11 @@ export default class SlipnSlider {
       return this;
     }
     this.onTransitionStart();
-
-    // Using querySelectorAll because multiple can turn up if isInfinite
-    let slideSelections = this.stage.querySelectorAll(`[data-js-slide-index="${dotIndex}"]`);
-
-    if (this.isInfinite && slideSelections.length > 1) {
-      // if the first dot is clicked, that is fine to navigate to.
-      // The alternative is the last dot was clicked which would result in the
-      // first cloned slide to be the first element from the querySelectorAll
-      // so we want to use the second element from slideSelections
-      slideSelections = dotIndex === 0 ? slideSelections[0] : slideSelections[1];
-    } else {
-      // Dont have to worry about cloned slides
-      slideSelections = slideSelections[0];
+    this.activeDotIndex = this.activeSlideIndex = dotIndex;
+    if (this.isInfinite) {
+      // TODO: this might not be entirely accurate...
+     this.activeSlideIndex += this.slidesPerPage;
     }
-
-    this.activeSlideIndex = Array.prototype.indexOf.call(this.slides, slideSelections);
 
     this.navigateToSlide();
 
@@ -579,9 +555,9 @@ export default class SlipnSlider {
     let travelled = this.startpoint - e.pageX;
     if (Math.abs(travelled) >= this.dragThreshold) {
       if (travelled < 0 && !this.atFirstSlide()) {
-        this.moveToAdjacentSlide(false);
+        this.determineAction(false);
       } else if (travelled > 0 && !this.atLastSlide()) {
-        this.moveToAdjacentSlide(true);
+        this.determineAction(true);
       } else {
         this.navigateToSlide();
       }
@@ -644,17 +620,11 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   navigateToSlide() {
-    let moveTo = (this.activeSlideIndex * this.slideWidth) + (this.slidePadding * this.activeSlideIndex);
-    if (!this.isInfinite) {
-      moveTo = moveTo >= this.upperBounds ? this.upperBounds : moveTo;
-    }
+    let moveTo = this.activeSlideIndex * this.slideBy;
+
     this.stage.style[this.transformPrefix] = `translate3d(-${moveTo}px,0,0)`;
     if (this.hasDotNav) {
       this.activeDot.className = "";
-      console.log(this.activeDotIndex)
-      // TODO: find way to handle with more than one slide per page. probably change
-      // in setDataAttrs
-      this.activeDotIndex = parseInt(this.slides[this.activeSlideIndex].dataset.jsSlideIndex);
       this.activeDot  = this.navDots[this.activeDotIndex]
       this.activeDot.className = this.dotIsActive;
     }
@@ -728,7 +698,7 @@ export default class SlipnSlider {
    * @return {Boolean} returns true if at last position
    */
   atLastSlide() {
-    return (this.activeSlideIndex === this.total - this.slidesPerPage) ? true : false;
+    return (this.activeSlideIndex === this.dotsCount - 1) ? true : false;
   }
 
   /**
@@ -811,7 +781,6 @@ export default class SlipnSlider {
         .calcInitialProps()
         .createDots()
         .createControls()
-        .setDataAttrs()
         .setupInfiniteSlider()
         .defineSizes()
         .navigateToSlide()
