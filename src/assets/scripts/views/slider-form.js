@@ -19,6 +19,7 @@ export default class SliderForm {
 		this.hasDotNav = this.element.querySelector(".js-hasDotNav");
 		this.hasControls = this.element.querySelector(".js-hasControls");
 		this.slidePadding = this.element.querySelector(".js-slidePadding");
+		this.slidesPerPage = this.element.querySelector(".js-slidesPerPage");
 		this.slipnsliderEl = window.app.slipnsliderEl || document.querySelector('.slipnslider');
 		this.slipnslider = window.app.slipnSlider || new SlipnSlider(this.slipnsliderEl);
 		return this;
@@ -43,7 +44,8 @@ export default class SliderForm {
 			isInfinite: eval(this.isInfinite.selectedOptions[0].value),
 			hasDotNav: eval(this.hasDotNav.selectedOptions[0].value),
       hasControls: eval(this.hasControls.selectedOptions[0].value),
-      slidePadding: parseInt(this.slidePadding.value)
+      slidePadding: parseInt(this.slidePadding.value),
+      slidesPerPage: parseInt(this.slidesPerPage.value)
 		};
 
 		this.slipnslider = new SlipnSlider(this.slipnsliderEl, options);
