@@ -2,8 +2,7 @@
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
 
-// REminder for later: figure out how to handle slide swapping with multiple
-// slides while isInfinite
+// (even if there arent any dots, still have that tracking going on)
 export default class SlipnSlider {
   constructor(element, options) {
     /**
@@ -20,7 +19,7 @@ export default class SlipnSlider {
      * @type {Object}
      */
     this.optionableProperties = {
-      isInfinite: false,
+      isInfinite: true,
       hasDotNav: true,
       hasControls: true,
       navContainer: '.slipnslider',
@@ -191,17 +190,36 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   setupInfiniteSlider() {
-    if (!this.isInfinite || this.total === 1) {
+    if (!this.isInfinite || this.total === 1 || this.total <= this.slidesPerPage) {
+      this.isInfinite = false;
       return this;
     }
 
-    let firstSlide  = this.slides[0].cloneNode(true);
-    let lastSlide   = this.slides[this.total - 1].cloneNode(true);
-    this.stage.appendChild(firstSlide);
-    this.stage.insertBefore(lastSlide, this.slides[0]);
-    this.slides     = this.stage.children;
+    let times = this.slidesPerPage + 1;
+    for (let i = 0; i < times; i++) {
+      let slide = this.slides[i].cloneNode(true);
+      this.stage.appendChild(slide);
+    }
+
+    let lastSlideIndex = this.total - 1;
+    for (let i = lastSlideIndex; i > lastSlideIndex - times; i--) {
+      let slide = this.slides[lastSlideIndex].cloneNode(true);
+      this.stage.insertBefore(slide, this.slides[0]);
+    }
+
     this.total      = this.slides.length;
-    this.activeSlideIndex = 1;
+    this.activeSlideIndex = this.slidesPerPage + 1;
+
+    // need additional dots for more than 1 slide per page
+    if (this.slidesPerPage > 1) {
+      for (let i = 0, j = this.slidesPerPage - 1; i < j; i++) {
+        this.dotNav.appendChild(document.createElement("li"));
+        this.dotsCount++;
+      }
+    }
+    // Recache the dots
+    this.navDots = this.dotNav.children;
+    this.dotsCount = this.navDots.length;
 
     return this;
   }
@@ -255,7 +273,6 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   createDots() {
-    if (!this.hasDotNav || this.total === 1) { return this; }
 
     let targetElement = document.querySelector(this.dotsContainer);
 
@@ -266,6 +283,12 @@ export default class SlipnSlider {
     this.activeDot = this.navDots[this.activeSlideIndex];
     this.activeDot.className = this.dotIsActive;
     targetElement.appendChild(this.dotNav);
+
+    if (!this.hasDotNav || this.total === 1) {
+      this.dotNav.style.display = "none";
+    } else {
+      this.dotNav.style.display = "";
+    }
 
     return this;
   }
@@ -366,9 +389,11 @@ export default class SlipnSlider {
         this.navDots[i].removeEventListener("click", this.onDotClickHandler)
       }
     }
+
     this.stage.removeEventListener(this.pressStart, this.onDragStartHandler);
-    this.stage.removeEventListener(this.pressMove, this.onDragHandler);
+    window.removeEventListener(this.pressMove, this.onDragHandler);
     window.removeEventListener(this.pressEnd, this.offDragHandler);
+    window.onresize = null;
 
     this.removeCreatedElements();
 
@@ -385,20 +410,28 @@ export default class SlipnSlider {
       this.prevBtn.parentElement.remove();
     }
 
-    if (this.hasDotNav) { this.dotNav.remove(); }
+    this.dotNav.remove();
 
     if (this.isInfinite) {
-      // need to remove the last one first otherwise the this.total
+      // need to remove the last ones first otherwise the this.total
       // number wont be accurate
-      this.slides[this.total - 1].remove();
-      this.slides[0].remove();
-      this.total -= 2;
+      let count = this.slidesPerPage + 1;
+      for (let i = this.total - 1, j = this.total - 1 - count; i > j; i--) {
+        this.slides[i].remove()
+      }
+      for (let i = 0; i < count; i++) {
+        this.slides[0].remove();
+      }
+
+      this.total -= count * 2;
     }
 
     for (let i = 0, j = 0; i < this.total; i++) {
       this.slides[j].style.width = "100%";
+      this.slides[j].style.marginLeft = "0";
       this.slider.appendChild(this.slides[j]);
     }
+
     this.stage.remove();
     this.slider.display = "none";
     return this;
@@ -475,8 +508,7 @@ export default class SlipnSlider {
     this.onTransitionStart();
     this.activeDotIndex = this.activeSlideIndex = dotIndex;
     if (this.isInfinite) {
-      // TODO: this might not be entirely accurate...
-     this.activeSlideIndex += this.slidesPerPage;
+     this.activeSlideIndex += this.slidesPerPage + 1;
     }
 
     this.navigateToSlide();
@@ -521,7 +553,6 @@ export default class SlipnSlider {
       window.scrollTo(document.body.scrollLeft, document.body.scrollTop + (this.curYPos - e.pageY));
     }
 
-    // TODO: incorporate this.upperBounds and make this more readible
     let currentPos  = ((this.activeSlideIndex * this.slideWidth) + (this.slidePadding * this.activeSlideIndex)) * -1;
     let movePos     = currentPos - ((this.startpoint - e.pageX) * 0.7);
 
@@ -553,13 +584,18 @@ export default class SlipnSlider {
     this.isDragging = false;
     this.stage.style[this.transitionPrefix] = "all .75s";
     let travelled = this.startpoint - e.pageX;
+
     if (Math.abs(travelled) >= this.dragThreshold) {
-      if (travelled < 0 && !this.atFirstSlide()) {
-        this.determineAction(false);
-      } else if (travelled > 0 && !this.atLastSlide()) {
-        this.determineAction(true);
+      if (this.isInfinite) {
+        (travelled > 0) ? this.determineAction(true) : this.determineAction(false);
       } else {
-        this.navigateToSlide();
+        if (travelled < 0 && !this.atFirstSlide()) {
+          this.determineAction(false);
+        } else if (travelled > 0 && !this.atLastSlide()) {
+          this.determineAction(true);
+        } else {
+          this.navigateToSlide();
+        }
       }
     } else {
       this.navigateToSlide();
@@ -639,9 +675,9 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   checkForSlideSwap() {
-    if (this.atFirstSlide()) {
+    if (this.activeDotIndex > 0 && this.activeSlideIndex <= this.slidesPerPage) {
       this.swapSlides(true);
-    } else if (this.atLastSlide()) {
+    } else if (this.activeDotIndex === 0 && this.activeSlideIndex >= this.total - this.slidesPerPage - 1) {
       this.swapSlides(false);
     }
     return this;
@@ -656,7 +692,8 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   swapSlides(direction) {
-    this.activeSlideIndex = direction ? this.total - 2 : 1;
+    let slidesPerPageShift = this.slidesPerPage + 1;
+    this.activeSlideIndex = direction ? this.total - slidesPerPageShift - 1 : slidesPerPageShift;
     this.removeStageTransition()
         .navigateToSlide()
         .addStageTransition();
@@ -690,7 +727,7 @@ export default class SlipnSlider {
    * @return {Boolean} returns true is at first position
    */
   atFirstSlide() {
-    return (this.activeSlideIndex === 0) ? true : false;
+    return (this.activeDotIndex === 0) ? true : false;
   }
 
   /**
@@ -698,7 +735,7 @@ export default class SlipnSlider {
    * @return {Boolean} returns true if at last position
    */
   atLastSlide() {
-    return (this.activeSlideIndex === this.dotsCount - 1) ? true : false;
+    return (this.activeDotIndex === this.dotsCount - 1) ? true : false;
   }
 
   /**
