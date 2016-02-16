@@ -51,10 +51,23 @@ export default class SlipnSlider {
     /**
      * Calculation of the width of each slide in percent
      * @type {Number}
+     * @default 0
      */
     this.slideWidth = 0;
+
+    /**
+     * The amount of dots created for navigation
+     * @type {Number}
+     * @default 0
+     */
     this.dotsCount = 0;
-    this.upperBounds = 0;
+
+    /**
+     * Value of amount the slider shifts by. Gets set to the
+     * width of a slide and the slidePadding to the left.
+     * @type {Number}
+     * @default 0
+     */
     this.slideBy = 0;
 
     /**
@@ -514,7 +527,12 @@ export default class SlipnSlider {
     return this;
   }
 
-
+  /**
+   * Action to execute when left and right arrows are
+   * pressed for navigation.
+   * @param  {Event Obj} e Event data for the keydown event
+   * @return {SlipnSlider}
+   */
   onKeyDown(e) {
     // might want to have a debounce to limit calls but behaves
     // as anticipated and isnt too overloading
