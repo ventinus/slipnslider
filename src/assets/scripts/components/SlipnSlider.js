@@ -28,7 +28,7 @@ export default class SlipnSlider {
       stageElement: 'div',
       slidePadding: 10,
       slidesPerPage: 1
-    }
+    };
 
     /**
      * User options object of settable properties
@@ -76,21 +76,21 @@ export default class SlipnSlider {
      * Either touch or mouse event
      * @type {Event Handler}
      */
-    this.pressStart = ('ontouchstart' in window) ? "touchstart" : "mousedown";
+    this.pressStart = ('ontouchstart' in window) ? 'touchstart' : 'mousedown';
 
     /**
      * Determines type of event based of device type
      * Either touch or mouse event
      * @type {Event Handler}
      */
-    this.pressEnd = ('ontouchend'   in window) ? "touchend"   : "mouseup";
+    this.pressEnd = ('ontouchend' in window) ? 'touchend'   : 'mouseup';
 
     /**
      * Determines type of event based of device type
      * Either touch or mouse event
      * @type {Event Handler}
      */
-    this.pressMove = ('ontouchmove'  in window) ? "touchmove"  : "mousemove";
+    this.pressMove = ('ontouchmove' in window) ? 'touchmove'  : 'mousemove';
 
     /**
      * Flag for determining if slide is transitioning
@@ -104,7 +104,7 @@ export default class SlipnSlider {
      * Classname for adding visibility of dots
      * @type {String - CSS class}
      */
-    this.dotIsActive = "slipnslider__active";
+    this.dotIsActive = 'slipnslider__active';
 
     /**
      * Accurate vendor prefix for adding event listener
@@ -213,7 +213,7 @@ export default class SlipnSlider {
     // need additional dots for more than 1 slide per page
     if (this.slidesPerPage > 1) {
       for (let i = 0, j = this.slidesPerPage - 1; i < j; i++) {
-        this.dotNav.appendChild(document.createElement("li"));
+        this.dotNav.appendChild(document.createElement('li'));
         this.dotsCount++;
       }
     }
@@ -232,7 +232,7 @@ export default class SlipnSlider {
    */
   setStage() {
     this.stage = document.createElement(this.stageElement);
-    this.stage.className = "slipnslider__stage";
+    this.stage.className = 'slipnslider__stage';
     this.slides = this.slider.children;
     this.total = this.slides.length;
 
@@ -276,18 +276,18 @@ export default class SlipnSlider {
 
     let targetElement = document.querySelector(this.dotsContainer);
 
-    this.dotNav = document.createElement("ul");
-    this.dotNav.className = "slipnslider__dot-nav";
-    for ( let i = 0; i < this.dotsCount; i++ ) { this.dotNav.appendChild(document.createElement("li")); }
-    this.navDots = this.dotNav.querySelectorAll("li");
+    this.dotNav = document.createElement('ul');
+    this.dotNav.className = 'slipnslider__dot-nav';
+    for ( let i = 0; i < this.dotsCount; i++ ) { this.dotNav.appendChild(document.createElement('li')); }
+    this.navDots = this.dotNav.querySelectorAll('li');
     this.activeDot = this.navDots[this.activeSlideIndex];
     this.activeDot.className = this.dotIsActive;
     targetElement.appendChild(this.dotNav);
 
     if (!this.hasDotNav || this.total === 1) {
-      this.dotNav.style.display = "none";
+      this.dotNav.style.display = 'none';
     } else {
-      this.dotNav.style.display = "";
+      this.dotNav.style.display = '';
     }
 
     return this;
@@ -304,16 +304,16 @@ export default class SlipnSlider {
   createControls() {
     if (!this.hasControls || this.total  === 1) { return this; }
     let targetElement = document.querySelector(this.navContainer);
-    let controlsWrapper = document.createElement("div");
-    controlsWrapper.className = "slipnslider__controls";
-    this.prevBtn = document.createElement("button");
-    this.prevBtn.className = "slipnslider__prev";
-    this.prevBtn.type = "button";
-    this.prevBtn.innerText = "prev";
-    this.nextBtn = document.createElement("button");
-    this.nextBtn.className = "slipnslider__next";
-    this.nextBtn.type = "button";
-    this.nextBtn.innerText = "next";
+    let controlsWrapper = document.createElement('div');
+    controlsWrapper.className = 'slipnslider__controls';
+    this.prevBtn = document.createElement('button');
+    this.prevBtn.className = 'slipnslider__prev';
+    this.prevBtn.type = 'button';
+    this.prevBtn.innerText = 'prev';
+    this.nextBtn = document.createElement('button');
+    this.nextBtn.className = 'slipnslider__next';
+    this.nextBtn.type = 'button';
+    this.nextBtn.innerText = 'next';
     controlsWrapper.appendChild(this.prevBtn);
     controlsWrapper.appendChild(this.nextBtn);
     targetElement.appendChild(controlsWrapper);
@@ -351,20 +351,20 @@ export default class SlipnSlider {
     if (this.dotsCount <= 1) { return this; }
 
     if (this.hasControls) {
-      this.nextBtn.addEventListener("click", this.onNextClickHandler);
-      this.prevBtn.addEventListener("click", this.onPrevClickHandler);
+      this.nextBtn.addEventListener('click', this.onNextClickHandler);
+      this.prevBtn.addEventListener('click', this.onPrevClickHandler);
     }
 
     if (this.hasDotNav) {
       for (let i = 0, j = this.navDots.length; i < j; i++) {
-        this.navDots[i].addEventListener("click", this.onDotClickHandler)
+        this.navDots[i].addEventListener('click', this.onDotClickHandler);
       }
     }
 
     this.stage.addEventListener(this.pressStart, this.onDragStartHandler);
     window.addEventListener(this.pressMove, this.onDragHandler);
     window.addEventListener(this.pressEnd, this.offDragHandler);
-    window.onresize = function(){this.defineSizes()}.bind(this);
+    window.onresize = function(){ this.defineSizes(); }.bind(this);
 
     // check for not mobile to attach keystroke eventhandler
     if (this.pressStart === 'mousedown') {
@@ -386,13 +386,13 @@ export default class SlipnSlider {
     this.isEnabled = false;
 
     if (this.hasControls) {
-      this.nextBtn.removeEventListener("click", this.onNextClickHandler);
-      this.prevBtn.removeEventListener("click", this.onPrevClickHandler);
+      this.nextBtn.removeEventListener('click', this.onNextClickHandler);
+      this.prevBtn.removeEventListener('click', this.onPrevClickHandler);
     }
 
     if (this.hasDotNav) {
       for (let i = 0, j = this.navDots.length; i < j; i++) {
-        this.navDots[i].removeEventListener("click", this.onDotClickHandler)
+        this.navDots[i].removeEventListener('click', this.onDotClickHandler);
       }
     }
 
@@ -427,7 +427,7 @@ export default class SlipnSlider {
       // number wont be accurate
       let count = this.slidesPerPage + 1;
       for (let i = this.total - 1, j = this.total - 1 - count; i > j; i--) {
-        this.slides[i].remove()
+        this.slides[i].remove();
       }
       for (let i = 0; i < count; i++) {
         this.slides[0].remove();
@@ -437,13 +437,13 @@ export default class SlipnSlider {
     }
 
     for (let i = 0, j = 0; i < this.total; i++) {
-      this.slides[j].style.width = "100%";
-      this.slides[j].style.marginLeft = "0";
+      this.slides[j].style.width = '100%';
+      this.slides[j].style.marginLeft = '0';
       this.slider.appendChild(this.slides[j]);
     }
 
     this.stage.remove();
-    this.slider.display = "none";
+    this.slider.display = 'none';
     return this;
   }
 
@@ -486,15 +486,28 @@ export default class SlipnSlider {
 
     if (direction && this.atLastSlide()) {
       this.activeDotIndex = 0;
-      (!this.isInfinite) ? this.activeSlideIndex = 0 : this.activeSlideIndex++;
+      if (!this.isInfinite) {
+        this.activeSlideIndex = 0;
+      } else {
+        this.activeSlideIndex++;
+      }
     } else if (!direction && this.atFirstSlide()) {
       this.activeDotIndex = this.dotsCount - 1;
-      (!this.isInfinite) ? this.activeSlideIndex = this.dotsCount - 1 : this.activeSlideIndex--;
+      if (!this.isInfinite) {
+        this.activeSlideIndex = this.dotsCount - 1;
+      } else {
+        this.activeSlideIndex--;
+      }
       // Using dotsCount because total will cause it to navigate beyond the slides
       // when multiple slides per page
     } else {
-      direction ? this.activeSlideIndex++ : this.activeSlideIndex--;
-      direction ? this.activeDotIndex++ : this.activeDotIndex--;
+      if (direction) {
+        this.activeSlideIndex++;
+        this.activeDotIndex++;
+      } else {
+        this.activeSlideIndex--;
+        this.activeDotIndex--;
+      }
     }
 
     this.navigateToSlide();
@@ -557,7 +570,7 @@ export default class SlipnSlider {
     this.startpoint = e.pageX;
     this.isDragging = true;
 
-    if (this.pressStart == "touchstart") {
+    if (this.pressStart === 'touchstart') {
       this.curYPos = e.pageY;
     }
 
@@ -575,7 +588,7 @@ export default class SlipnSlider {
   onDrag(e) {
     if (this.isTransitioning || !this.isDragging) { return this; }
 
-    if (this.pressMove === "touchmove") {
+    if (this.pressMove === 'touchmove') {
       window.scrollTo(document.body.scrollLeft, document.body.scrollTop + (this.curYPos - e.pageY));
     }
 
@@ -607,12 +620,16 @@ export default class SlipnSlider {
   offDrag(e) {
     if (!this.isDragging) { return this; }
     this.isDragging = false;
-    this.stage.style[this.transitionPrefix] = "all .75s";
+    this.stage.style[this.transitionPrefix] = 'all .75s';
     let travelled = this.startpoint - e.pageX;
 
     if (Math.abs(travelled) >= this.dragThreshold) {
       if (this.isInfinite) {
-        (travelled > 0) ? this.determineAction(true) : this.determineAction(false);
+        if (travelled > 0) {
+          this.determineAction(true);
+        } else {
+          this.determineAction(false);
+        }
       } else {
         if (travelled < 0 && !this.atFirstSlide()) {
           this.determineAction(false);
@@ -661,10 +678,12 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   bindTransitionEvents(callback) {
-    this.transitionEndPrefix && this.stage.addEventListener(this.transitionEndPrefix, function(event, callback){
-      callback && callback();
-      this.onTransitionEnd();
-    }.bind(this));
+    if (this.transitionEndPrefix) {
+      this.stage.addEventListener(this.transitionEndPrefix, function(event, callback){
+        if (callback) { callback(); }
+        this.onTransitionEnd();
+      }.bind(this));
+    }
 
     return this;
   }
@@ -685,8 +704,8 @@ export default class SlipnSlider {
 
     this.stage.style[this.transformPrefix] = `translate3d(-${moveTo}px,0,0)`;
     if (this.hasDotNav) {
-      this.activeDot.className = "";
-      this.activeDot  = this.navDots[this.activeDotIndex]
+      this.activeDot.className = '';
+      this.activeDot  = this.navDots[this.activeDotIndex];
       this.activeDot.className = this.dotIsActive;
     }
 
@@ -731,7 +750,7 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   removeStageTransition() {
-    this.stage.style[this.transitionPrefix] = "all 0s";
+    this.stage.style[this.transitionPrefix] = 'all 0s';
     return this;
   }
 
@@ -742,8 +761,8 @@ export default class SlipnSlider {
    */
   addStageTransition() {
     setTimeout(() => {
-      this.stage.style[this.transitionPrefix] = "all .75s";
-    }.bind(this), 1)
+      this.stage.style[this.transitionPrefix] = 'all .75s';
+    }.bind(this), 1);
     return this;
   }
 
@@ -776,7 +795,7 @@ export default class SlipnSlider {
       'OTransition':'oTransitionEnd',
       'MozTransition':'transitionend',
       'WebkitTransition':'webkitTransitionEnd'
-    }
+    };
 
     for(t in transitions){
       if( el.style[t] !== undefined ){
@@ -798,7 +817,7 @@ export default class SlipnSlider {
       'OTransition':'oTransition',
       'MozTransition':'transition',
       'WebkitTransition':'webkitTransition'
-    }
+    };
 
     for(t in transitions){
       if( el.style[t] !== undefined ){
@@ -820,7 +839,7 @@ export default class SlipnSlider {
       'OTransform':'oTransform',
       'MozTransform':'mozTransform',
       'WebkitTransform':'webkitTransform'
-    }
+    };
 
     for(t in transforms){
       if( el.style[t] !== undefined ){
