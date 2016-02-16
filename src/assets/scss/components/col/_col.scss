@@ -1,0 +1,15 @@
+.col {
+	display: block;
+	font-size: 0;
+}
+
+.col > * {
+	display: inline-block;
+	font-size: initial;
+	padding: 10px;
+  box-sizing: border-box;
+}
+
+.col--1--sm > * {
+	width: 100%;
+}

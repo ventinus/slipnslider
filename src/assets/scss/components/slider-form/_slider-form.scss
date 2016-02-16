@@ -2,7 +2,7 @@
   width: 50%;
   margin: 30px auto 0;
   border: 2px solid #a82bde;
-  padding: 30px;
+  padding: 30px 15px;
   border-radius: 40px;
 }
 
@@ -15,13 +15,20 @@
   width: auto;
   margin-left: auto;
   margin-right: auto;
+  display: block;
 }
 
-.slider-form > * {
+.slider-form input[type="number"] {
+  padding: 5px;
+}
+
+.slider-form .slider-form__input {
   display: block;
   width: 100%;
+  text-transform: uppercase;
+  font-size: 14px;
 }
 
-.slider-form > * + * {
+.slider-form .slider-form__input + * {
   margin-top: 15px;
 }
