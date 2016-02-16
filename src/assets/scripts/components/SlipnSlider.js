@@ -19,7 +19,7 @@ export default class SlipnSlider {
      * @type {Object}
      */
     this.optionableProperties = {
-      isInfinite: true,
+      isInfinite: false,
       hasDotNav: true,
       hasControls: true,
       navContainer: '.slipnslider',
@@ -27,7 +27,7 @@ export default class SlipnSlider {
       slideElement: 'div',
       stageElement: 'div',
       slidePadding: 10,
-      slidesPerPage: 2
+      slidesPerPage: 1
     }
 
     /**
