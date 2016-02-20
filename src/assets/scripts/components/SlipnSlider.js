@@ -27,8 +27,25 @@ export default class SlipnSlider {
       slideElement: 'div',
       stageElement: 'div',
       slidePadding: 10,
-      slidesPerPage: 1
+      slidesPerPage: 1,
+      responsive: {}
     };
+
+    // Example of what responsive could look like
+    this.optionableProperties.responsive = {
+      0: {
+        slidesPerPage: 1
+      },
+      480: {
+        slidesPerPage: 2
+      },
+      768: {
+        slidesPerPage: 3
+      }
+    }
+
+    this.breakpoints = [];
+    this.currentBreakpoint = 0;
 
     /**
      * User options object of settable properties
@@ -188,6 +205,33 @@ export default class SlipnSlider {
         this[option] = this.options[option];
       } else {
         this[option] = this.optionableProperties[option];
+      }
+    }
+
+    return this;
+  }
+
+  parseResponsive() {
+    let windowWidth = window.innerWidth;
+    for (let breakpoint in this.optionableProperties.responsive) {
+      breakpoint = parseInt(breakpoint);
+      this.breakpoints.push(breakpoint);
+      if (breakpoint < windowWidth) {
+        this.currentBreakpoint = breakpoint;
+      }
+    }
+
+    if (this.breakpoints.length === 0) { return this; }
+
+    this.applyCurrentBreakptProps();
+
+    return this;
+  }
+
+  applyCurrentBreakptProps() {
+    for (let item in this.optionableProperties.responsive[this.currentBreakpoint]) {
+      if (typeof this.optionableProperties.responsive[this.currentBreakpoint][item] === typeof this[item]) {
+        this[item] = this.optionableProperties.responsive[this.currentBreakpoint][item];
       }
     }
 
@@ -377,7 +421,7 @@ export default class SlipnSlider {
     this.stage.addEventListener(this.pressStart, this.onDragStartHandler);
     window.addEventListener(this.pressMove, this.onDragHandler);
     window.addEventListener(this.pressEnd, this.offDragHandler);
-    window.onresize = function(){ this.defineSizes(); }.bind(this);
+    window.onresize = function(){ this.onWindowResize(); }.bind(this);
 
     // check for not mobile to attach keystroke eventhandler
     if (this.pressStart === 'mousedown') {
@@ -464,12 +508,52 @@ export default class SlipnSlider {
   // Event Listeners
   // =========================================================
 
+  onWindowResize() {
+    this.defineSizes();
+    if (this.breakpoints.length === 0) {
+      return this;
+    }
+
+    let currentBreakIndex = this.breakpoints.indexOf(this.currentBreakpoint);
+    let windowWidth = window.innerWidth;
+
+    if (windowWidth >= this.breakpoints[currentBreakIndex + 1]) {
+      this.currentBreakpoint = this.breakpoints[currentBreakIndex + 1];
+      this.rebuildSlider();
+    } else if (currentBreakIndex > 0 && windowWidth < this.breakpoints[currentBreakIndex]) {
+      this.currentBreakpoint = this.breakpoints[currentBreakIndex - 1];
+      this.rebuildSlider();
+    }
+
+    return this;
+  }
+
+  rebuildSlider() {
+    this.activeSlideIndex = this.activeDotIndex = 0;
+    this.disable()
+        .applyCurrentBreakptProps()
+        .setStage()
+        .calcInitialProps()
+        .createDots()
+        .createControls()
+        .setupInfiniteSlider()
+        .defineSizes()
+        .navigateToSlide()
+        .addStageTransition()
+        .bindTransitionEvents()
+        .addEventHandlers()
+        .enable();
+
+    return this;
+  }
+
   /**
    * Sets the width of the slider stage as well as
    * the contained slides
    * @return {SlipnSlider}
    */
   defineSizes() {
+    this.removeStageTransition();
     let totalPadding = (this.total - 1) * this.slidePadding;
     this.slideWidth = Math.ceil((this.slider.offsetWidth - (this.slidePadding * (this.slidesPerPage - 1)) ) / this.slidesPerPage);
     let stageWidth = (this.total * this.slideWidth) + totalPadding;
@@ -480,7 +564,10 @@ export default class SlipnSlider {
     Array.prototype.forEach.call(this.slides, (slide) => {
       slide.style.width = `${this.slideWidth}px`;
       slide.style.marginLeft = `${this.slidePadding}px`;
-    }.bind(this));
+    });
+
+    this.navigateToSlide()
+        .addStageTransition();
     return this;
   }
 
@@ -876,6 +963,7 @@ export default class SlipnSlider {
    */
   init() {
     this.takeUserOptions()
+        .parseResponsive()
         .setStage()
         .calcInitialProps()
         .createDots()
