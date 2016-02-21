@@ -31,20 +31,16 @@ export default class SlipnSlider {
       responsive: {}
     };
 
-    // Example of what responsive could look like
-    this.optionableProperties.responsive = {
-      0: {
-        slidesPerPage: 1
-      },
-      480: {
-        slidesPerPage: 2
-      },
-      768: {
-        slidesPerPage: 3
-      }
-    }
-
+    /**
+     * Collection of breakpoints specified through options
+     * @type {Array}
+     */
     this.breakpoints = [];
+
+    /**
+     * Current minimum width breakpoint
+     * @type {Number}
+     */
     this.currentBreakpoint = 0;
 
     /**
@@ -211,6 +207,11 @@ export default class SlipnSlider {
     return this;
   }
 
+  /**
+   * Runs through the breakpoints specified in the responsive property, stores
+   * each breakpoint and finds which breakpoint we are currently in.
+   * @return {Slipnslider}
+   */
   parseResponsive() {
     let windowWidth = window.innerWidth;
     for (let breakpoint in this.optionableProperties.responsive) {
@@ -228,6 +229,11 @@ export default class SlipnSlider {
     return this;
   }
 
+  /**
+   * Overwrites any defaults or options set with the options
+   * specified for the current breakpoint.
+   * @return {Slipnslider}
+   */
   applyCurrentBreakptProps() {
     for (let item in this.optionableProperties.responsive[this.currentBreakpoint]) {
       if (typeof this.optionableProperties.responsive[this.currentBreakpoint][item] === typeof this[item]) {
@@ -247,8 +253,7 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   setupInfiniteSlider() {
-    if (!this.isInfinite || this.total === 1 || this.total <= this.slidesPerPage) {
-      this.isInfinite = false;
+    if (!this.isInfinite) {
       return this;
     }
 
@@ -309,14 +314,21 @@ export default class SlipnSlider {
     return this;
   }
 
+  /**
+   * Checks if there are enough slides for the desired setup
+   * to prevent odd and unwanted behaviour
+   * @return {Slipnslider}
+   */
   calcInitialProps() {
     // Dont allow slides per page to exceed the total amount of slides
     if (this.slidesPerPage > this.total) { this.slidesPerPage = this.total; }
     this.dotsCount = this.total - (this.slidesPerPage - 1);
 
+    // Disallow nav and infinite becaause there is nowhere to go
     if (this.dotsCount <= 1) {
       this.hasDotNav = false;
       this.hasControls = false;
+      this.isInfinite = false;
       return this;
     }
 
@@ -330,7 +342,6 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   createDots() {
-
     let targetElement = document.querySelector(this.dotsContainer);
 
     this.dotNav = document.createElement('ul');
@@ -341,11 +352,8 @@ export default class SlipnSlider {
     this.activeDot.className = this.dotIsActive;
     targetElement.appendChild(this.dotNav);
 
-    if (!this.hasDotNav || this.total === 1) {
-      this.dotNav.style.display = 'none';
-    } else {
-      this.dotNav.style.display = '';
-    }
+    let dispStyle = !this.hasDotNav ? 'none' : '';
+    this.dotNav.style.display = dispStyle;
 
     return this;
   }
@@ -508,6 +516,11 @@ export default class SlipnSlider {
   // Event Listeners
   // =========================================================
 
+  /**
+   * Checks for when the user enters a different breakpoint
+   * and decides to rebuild the slider
+   * @return {Slipnslider}
+   */
   onWindowResize() {
     this.defineSizes();
     if (this.breakpoints.length === 0) {
@@ -528,6 +541,12 @@ export default class SlipnSlider {
     return this;
   }
 
+  /**
+   * Disables and resets current slide and dot indices back
+   * to the beginning and runs most of the init functions
+   * except for the parsing options function
+   * @return {Slipnslider}
+   */
   rebuildSlider() {
     this.activeSlideIndex = this.activeDotIndex = 0;
     this.disable()
