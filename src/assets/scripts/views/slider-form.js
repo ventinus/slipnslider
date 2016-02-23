@@ -44,11 +44,14 @@ export default class SliderForm {
 		let dotsVal = this.hasDotNav.selectedOptions[0].value === 'true' ? true : false;
 		let controlsVal = this.hasControls.selectedOptions[0].value === 'true' ? true : false;
 
+		let slidePaddingVal = parseInt(this.slidePadding.value);
+		if (slidePaddingVal === NaN) { slidePaddingVal = 10; }
+
 		let options = {
 			isInfinite: infinteVal,
 			hasDotNav: dotsVal,
       hasControls: controlsVal,
-      slidePadding: parseInt(this.slidePadding.value) || 10,
+      slidePadding: slidePaddingVal,
       slidesPerPage: parseInt(this.slidesPerPage.value) || 1
 		};
 

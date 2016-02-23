@@ -2,7 +2,6 @@
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
 
-// (even if there arent any dots, still have that tracking going on)
 export default class SlipnSlider {
   constructor(element, options) {
     /**
