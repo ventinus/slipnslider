@@ -1,7 +1,7 @@
 // Features to add:
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
-
+// TODO: check into why controls arent rebuilt
 export default class SlipnSlider {
   constructor(element, options) {
     /**
@@ -23,10 +23,13 @@ export default class SlipnSlider {
       hasControls: true,
       navContainer: '.slipnslider',
       dotsContainer: '.slipnslider',
+      navText: ['prev', 'next'],
       slideElement: 'div',
       stageElement: 'div',
       slidePadding: 10,
       slidesPerPage: 1,
+      prevNavigationCallback: function() { console.log('prev callback'); },
+      nextNavigationCallback: function() { console.log('next callback'); },
       responsive: {}
     };
 
@@ -213,7 +216,7 @@ export default class SlipnSlider {
    */
   parseResponsive() {
     let windowWidth = window.innerWidth;
-    for (let breakpoint in this.optionableProperties.responsive) {
+    for (let breakpoint in this.responsive) {
       breakpoint = parseInt(breakpoint);
       this.breakpoints.push(breakpoint);
       if (breakpoint < windowWidth) {
@@ -234,9 +237,9 @@ export default class SlipnSlider {
    * @return {Slipnslider}
    */
   applyCurrentBreakptProps() {
-    for (let item in this.optionableProperties.responsive[this.currentBreakpoint]) {
-      if (typeof this.optionableProperties.responsive[this.currentBreakpoint][item] === typeof this[item]) {
-        this[item] = this.optionableProperties.responsive[this.currentBreakpoint][item];
+    for (let item in this.responsive[this.currentBreakpoint]) {
+      if (typeof this.responsive[this.currentBreakpoint][item] === typeof this[item]) {
+        this[item] = this.responsive[this.currentBreakpoint][item];
       }
     }
 
@@ -252,7 +255,7 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   setupInfiniteSlider() {
-    if (!this.isInfinite) {
+    if (!this.isInfiniteOverride) {
       return this;
     }
 
@@ -325,10 +328,14 @@ export default class SlipnSlider {
 
     // Disallow nav and infinite becaause there is nowhere to go
     if (this.dotsCount <= 1) {
-      this.hasDotNav = false;
-      this.hasControls = false;
-      this.isInfinite = false;
+      this.hasDotNavOverride = false;
+      this.hasControlsOverride = false;
+      this.isInfiniteOverride = false;
       return this;
+    } else {
+      this.hasDotNavOverride = this.hasDotNav;
+      this.hasControlsOverride = this.hasControls;
+      this.isInfiniteOverride = this.isInfinite;
     }
 
     return this;
@@ -351,7 +358,7 @@ export default class SlipnSlider {
     this.activeDot.className = this.dotIsActive;
     targetElement.appendChild(this.dotNav);
 
-    let dispStyle = !this.hasDotNav ? 'none' : '';
+    let dispStyle = !this.hasDotNavOverride ? 'none' : '';
     this.dotNav.style.display = dispStyle;
 
     return this;
@@ -366,18 +373,18 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   createControls() {
-    if (!this.hasControls || this.total  === 1) { return this; }
+    if (!this.hasControlsOverride || this.total  === 1) { return this; }
     let targetElement = document.querySelector(this.navContainer);
     let controlsWrapper = document.createElement('div');
     controlsWrapper.className = 'slipnslider__controls';
     this.prevBtn = document.createElement('button');
     this.prevBtn.className = 'slipnslider__prev';
     this.prevBtn.type = 'button';
-    this.prevBtn.innerText = 'prev';
+    this.prevBtn.innerHTML = this.navText[0];
     this.nextBtn = document.createElement('button');
     this.nextBtn.className = 'slipnslider__next';
     this.nextBtn.type = 'button';
-    this.nextBtn.innerText = 'next';
+    this.nextBtn.innerHTML = this.navText[1];
     controlsWrapper.appendChild(this.prevBtn);
     controlsWrapper.appendChild(this.nextBtn);
     targetElement.appendChild(controlsWrapper);
@@ -398,6 +405,7 @@ export default class SlipnSlider {
     this.onDragHandler      = this.onDrag.bind(this);
     this.offDragHandler     = this.offDrag.bind(this);
     this.keydownHandler     = this.onKeyDown.bind(this);
+    this.onResizeHandler    = this.onWindowResize.bind(this);
     return this;
   }
 
@@ -412,14 +420,16 @@ export default class SlipnSlider {
 
     // Prevent event handlers from being set if there aren't
     // any other slides to slide to
+    window.addEventListener('resize', this.onResizeHandler);
+
     if (this.dotsCount <= 1) { return this; }
 
-    if (this.hasControls) {
+    if (this.hasControlsOverride) {
       this.nextBtn.addEventListener('click', this.onNextClickHandler);
       this.prevBtn.addEventListener('click', this.onPrevClickHandler);
     }
 
-    if (this.hasDotNav) {
+    if (this.hasDotNavOverride) {
       for (let i = 0, j = this.navDots.length; i < j; i++) {
         this.navDots[i].addEventListener('click', this.onDotClickHandler);
       }
@@ -428,7 +438,6 @@ export default class SlipnSlider {
     this.stage.addEventListener(this.pressStart, this.onDragStartHandler);
     window.addEventListener(this.pressMove, this.onDragHandler);
     window.addEventListener(this.pressEnd, this.offDragHandler);
-    window.onresize = function(){ this.onWindowResize(); }.bind(this);
 
     // check for not mobile to attach keystroke eventhandler
     if (this.pressStart === 'mousedown') {
@@ -449,12 +458,12 @@ export default class SlipnSlider {
 
     this.isEnabled = false;
 
-    if (this.hasControls) {
+    if (this.hasControlsOverride) {
       this.nextBtn.removeEventListener('click', this.onNextClickHandler);
       this.prevBtn.removeEventListener('click', this.onPrevClickHandler);
     }
 
-    if (this.hasDotNav) {
+    if (this.hasDotNavOverride) {
       for (let i = 0, j = this.navDots.length; i < j; i++) {
         this.navDots[i].removeEventListener('click', this.onDotClickHandler);
       }
@@ -463,7 +472,7 @@ export default class SlipnSlider {
     this.stage.removeEventListener(this.pressStart, this.onDragStartHandler);
     window.removeEventListener(this.pressMove, this.onDragHandler);
     window.removeEventListener(this.pressEnd, this.offDragHandler);
-    window.onresize = null;
+    window.removeEventListener('resize', this.onResizeHandler);
 
     if (this.pressStart === 'mousedown') {
       window.removeEventListener('keydown', this.keydownHandler);
@@ -480,13 +489,13 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   removeCreatedElements() {
-    if (this.hasControls) {
+    if (this.hasControlsOverride) {
       this.prevBtn.parentElement.remove();
     }
 
     this.dotNav.remove();
 
-    if (this.isInfinite) {
+    if (this.isInfiniteOverride) {
       // need to remove the last ones first otherwise the this.total
       // number wont be accurate
       let count = this.slidesPerPage + 1;
@@ -602,16 +611,22 @@ export default class SlipnSlider {
     if (this.isTransitioning) { return this; }
     this.onTransitionStart();
 
+    if (direction) {
+      this.nextNavigationCallback();
+    } else {
+      this.prevNavigationCallback();
+    }
+
     if (direction && this.atLastSlide()) {
       this.activeDotIndex = 0;
-      if (!this.isInfinite) {
+      if (!this.isInfiniteOverride) {
         this.activeSlideIndex = 0;
       } else {
         this.activeSlideIndex++;
       }
     } else if (!direction && this.atFirstSlide()) {
       this.activeDotIndex = this.dotsCount - 1;
-      if (!this.isInfinite) {
+      if (!this.isInfiniteOverride) {
         this.activeSlideIndex = this.dotsCount - 1;
       } else {
         this.activeSlideIndex--;
@@ -667,7 +682,7 @@ export default class SlipnSlider {
     }
     this.onTransitionStart();
     this.activeDotIndex = this.activeSlideIndex = dotIndex;
-    if (this.isInfinite) {
+    if (this.isInfiniteOverride) {
      this.activeSlideIndex += this.slidesPerPage + 1;
     }
 
@@ -719,7 +734,7 @@ export default class SlipnSlider {
     let currentPos  = ((this.activeSlideIndex * this.slideWidth) + (this.slidePadding * this.activeSlideIndex)) * -1;
     let movePos     = currentPos - ((this.startpoint - e.pageX) * 0.7);
 
-    if (!this.isInfinite) {
+    if (!this.isInfiniteOverride) {
       // Dividing by 4 and multiplying by 0.75 allows a
       // peek over either end by a quarter of slide width
       if (movePos >= this.slider.offsetWidth / 4) {
@@ -748,7 +763,7 @@ export default class SlipnSlider {
     let travelled = this.startpoint - e.pageX;
 
     if (Math.abs(travelled) >= this.dragThreshold) {
-      if (this.isInfinite) {
+      if (this.isInfiniteOverride) {
         if (travelled > 0) {
           this.determineAction(true);
         } else {
@@ -788,7 +803,7 @@ export default class SlipnSlider {
    */
   onTransitionEnd() {
     this.isTransitioning = false;
-    if (this.isInfinite) {
+    if (this.isInfiniteOverride) {
       this.checkForSlideSwap();
     }
 
@@ -827,7 +842,7 @@ export default class SlipnSlider {
     let moveTo = this.activeSlideIndex * this.slideBy;
 
     this.stage.style[this.transformPrefix] = `translate3d(-${moveTo}px,0,0)`;
-    if (this.hasDotNav) {
+    if (this.hasDotNavOverride) {
       this.activeDot.className = '';
       this.activeDot  = this.navDots[this.activeDotIndex];
       this.activeDot.className = this.dotIsActive;
