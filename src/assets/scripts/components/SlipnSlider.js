@@ -301,11 +301,8 @@ export default class SlipnSlider {
     this.total = this.slides.length;
 
     for (let i = 0; i < this.total; i++) {
-      let slide  = document.createElement(this.slideElement);
-      for (let j = 0, h = this.slides[0].children.length; j < h; j++) {
-        slide.appendChild(this.slides[0].children[0]);
-      }
-      this.slides[0].remove();
+      let slide = this.slides[0].cloneNode(true)
+      this.slides[0].remove()
       this.stage.appendChild(slide);
     }
 
