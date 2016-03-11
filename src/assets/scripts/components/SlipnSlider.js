@@ -1,7 +1,7 @@
 // Features to add:
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
-// TODO: check into why controls arent rebuilt
+
 export default class SlipnSlider {
   constructor(element, options) {
     /**
