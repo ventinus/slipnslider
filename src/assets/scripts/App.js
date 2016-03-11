@@ -20,7 +20,7 @@ export default class App {
   }
 
   initSlider() {
-  	this.slipnSlider = new SlipnSlider(this.slipnsliderEl, {responsive: {400: {slidesPerPage:2}, 700: {slidesPerPage: 4} } });
+  	this.slipnSlider = new SlipnSlider(this.slipnsliderEl);
   	this.slipnSlider.init();
     return this;
   }
