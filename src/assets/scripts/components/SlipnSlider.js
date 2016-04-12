@@ -301,8 +301,9 @@ export default class SlipnSlider {
     this.total = this.slides.length;
 
     for (let i = 0; i < this.total; i++) {
-      let slide = this.slides[0].cloneNode(true)
-      this.slides[0].remove()
+      let slide = this.slides[0].cloneNode(true);
+      this.slider.removeChild(this.slides[0]);
+      // this.slides[0].remove()
       this.stage.appendChild(slide);
     }
 
@@ -487,20 +488,21 @@ export default class SlipnSlider {
    */
   removeCreatedElements() {
     if (this.hasControlsOverride) {
-      this.prevBtn.parentElement.remove();
+      this.slider.removeChild(this.prevBtn.parentElement);
+      // this.prevBtn.parentElement.remove();
     }
 
-    this.dotNav.remove();
+    this.slider.removeChild(this.dotNav);
 
     if (this.isInfiniteOverride) {
       // need to remove the last ones first otherwise the this.total
       // number wont be accurate
       let count = this.slidesPerPage + 1;
       for (let i = this.total - 1, j = this.total - 1 - count; i > j; i--) {
-        this.slides[i].remove();
+        this.stage.removeChild(this.slides[i]);
       }
       for (let i = 0; i < count; i++) {
-        this.slides[0].remove();
+        this.stage.removeChild(this.slides[0]);
       }
 
       this.total -= count * 2;
@@ -512,7 +514,7 @@ export default class SlipnSlider {
       this.slider.appendChild(this.slides[j]);
     }
 
-    this.stage.remove();
+    this.slider.removeChild(this.stage);
     this.slider.display = 'none';
     return this;
   }
