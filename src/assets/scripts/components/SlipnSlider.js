@@ -315,9 +315,9 @@ export default class SlipnSlider {
       this.stage.appendChild(slide);
     }
 
-    this.slides = this.stage.children;
     this.slider.appendChild(this.stage);
     this.stage = this.slider.children[0];
+    this.slides = this.stage.children;
 
     return this;
   }
@@ -595,10 +595,11 @@ export default class SlipnSlider {
     this.dragThreshold = this.slider.offsetWidth / 4;
     this.slideBy = this.slideWidth + this.slidePadding;
 
-    Array.prototype.forEach.call(this.slides, (slide) => {
-      slide.style.width = `${this.slideWidth}px`;
-      slide.style.marginLeft = `${this.slidePadding}px`;
-    });
+    // TODO: check if this.total is the same as this.slides.length
+    for (let i = 0, j = this.slides.length; i < j; i++) {
+      this.slides[i].style.width = `${this.slideWidth}px`;
+      this.slides[i].style.marginLeft = `${this.slidePadding}px`;
+    }
 
     this.navigateToSlide()
         .addStageTransition();
