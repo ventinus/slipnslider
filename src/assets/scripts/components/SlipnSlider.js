@@ -193,6 +193,12 @@ export default class SlipnSlider {
      * @default false
      */
     this.brokeHorizontalThreshold = false;
+
+    /**
+     * [wasDragged description]
+     * @type {Boolean}
+     */
+    this.wasDragged = false;
   }
 
   // =========================================================
@@ -404,14 +410,15 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   addEventHandlers() {
-    this.onNextClickHandler = this.determineAction.bind(this, true);
-    this.onPrevClickHandler = this.determineAction.bind(this, false);
-    this.onDotClickHandler  = this.onDotClick.bind(this);
-    this.onDragStartHandler = this.onDragStart.bind(this);
-    this.onDragHandler      = this.onDrag.bind(this);
-    this.offDragHandler     = this.offDrag.bind(this);
-    this.keydownHandler     = this.onKeyDown.bind(this);
-    this.onResizeHandler    = this.onWindowResize.bind(this);
+    this.onNextClickHandler   = this.determineAction.bind(this, true);
+    this.onPrevClickHandler   = this.determineAction.bind(this, false);
+    this.onDotClickHandler    = this.onDotClick.bind(this);
+    this.onDragStartHandler   = this.onDragStart.bind(this);
+    this.onDragHandler        = this.onDrag.bind(this);
+    this.offDragHandler       = this.offDrag.bind(this);
+    this.keydownHandler       = this.onKeyDown.bind(this);
+    this.onResizeHandler      = this.onWindowResize.bind(this);
+    this.onSliderClickHandler = this.onSliderClick.bind(this);
     return this;
   }
 
@@ -442,6 +449,8 @@ export default class SlipnSlider {
     }
 
     this.stage.addEventListener(this.pressStart, this.onDragStartHandler, false);
+    this.stage.addEventListener('click', this.onSliderClickHandler, false);
+
     window.addEventListener(this.pressMove, this.onDragHandler, false);
     window.addEventListener(this.pressEnd, this.offDragHandler, false);
 
@@ -476,6 +485,8 @@ export default class SlipnSlider {
     }
 
     this.stage.removeEventListener(this.pressStart, this.onDragStartHandler, false);
+    this.stage.removeEventListener('click', this.onSliderClickHandler, false);
+
     window.removeEventListener(this.pressMove, this.onDragHandler, false);
     window.removeEventListener(this.pressEnd, this.offDragHandler, false);
     window.removeEventListener('resize', this.onResizeHandler, false);
@@ -530,6 +541,22 @@ export default class SlipnSlider {
   // =========================================================
   // Event Listeners
   // =========================================================
+
+  /**
+   * Ensures to preventDefault when the slides are anchor tags and
+   * the slider had been dragged and released while still above the slider
+   * @param  {Object} e Event click data
+   * @return {Slipnslider}
+   */
+  onSliderClick(e) {
+    if (this.wasDragged) {
+      e.preventDefault();
+    }
+
+    this.wasDragged = false;
+
+    return this;
+  }
 
   /**
    * Checks for when the user enters a different breakpoint
@@ -735,6 +762,9 @@ export default class SlipnSlider {
    */
   onDrag(e) {
     if (this.isTransitioning || !this.isDragging) { return this; }
+
+    // flag for preventing default click event when slides are anchor tags
+    this.wasDragged = true;
 
     if (this.pressMove === 'touchmove') {
       // Check to see if user is moving more vertically than horizontally
