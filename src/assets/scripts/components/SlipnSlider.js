@@ -199,6 +199,20 @@ export default class SlipnSlider {
      * @type {Boolean}
      */
     this.wasDragged = false;
+
+    /**
+     * Flag for determining if device is mobile or desktop.
+     * Defined by whether the device supports touch events
+     * @type {Boolean}
+     */
+    this.isMobileDevice = false;
+
+    /**
+     * Flag for determining if device is android. Touch event
+     * data is different between iOs and android
+     * @type {Boolean}
+     */
+    this.isAndroid = false;
   }
 
   // =========================================================
@@ -455,7 +469,7 @@ export default class SlipnSlider {
     window.addEventListener(this.pressEnd, this.offDragHandler, false);
 
     // check for not mobile to attach keystroke eventhandler
-    if (this.pressStart === 'mousedown') {
+    if (!this.isMobileDevice) {
       window.addEventListener('keydown', this.keydownHandler, false);
     }
 
@@ -491,7 +505,7 @@ export default class SlipnSlider {
     window.removeEventListener(this.pressEnd, this.offDragHandler, false);
     window.removeEventListener('resize', this.onResizeHandler, false);
 
-    if (this.pressStart === 'mousedown') {
+    if (!this.isMobileDevice) {
       window.removeEventListener('keydown', this.keydownHandler, false);
     }
 
@@ -736,18 +750,17 @@ export default class SlipnSlider {
   onDragStart(e) {
     if (this.isTransitioning) { return this; }
 
-    // if( navigator.userAgent.match(/Android/i) ) {
-    //   e.preventDefault();
-    // }
-
     this.removeStageTransition();
-    this.startpoint = e.pageX;
     this.isDragging = true;
 
-    if (this.pressStart === 'touchstart') {
-      this.curYPos = e.pageY;
-      this.brokeHorizontalThreshold = false
+    let eData = this.isAndroid ? e.touches[0] : e;
+
+    if (this.isMobileDevice) {
+      this.brokeHorizontalThreshold = false;
+      this.curYPos = eData.pageY;
     }
+
+    this.startpoint = eData.pageX;
 
     return this;
   }
@@ -762,16 +775,20 @@ export default class SlipnSlider {
    */
   onDrag(e) {
     if (this.isTransitioning || !this.isDragging) { return this; }
-
+    let eData = this.isAndroid ? e.changedTouches[0] : e;
     // flag for preventing default click event when slides are anchor tags
     this.wasDragged = true;
 
-    if (this.pressMove === 'touchmove') {
+
+    if (this.isMobileDevice) {
       // Check to see if user is moving more vertically than horizontally
       // to then disable the drag
-      let yMvt = Math.abs(this.curYPos - e.pageY);
-      let xMvt = Math.abs(this.startpoint - e.pageX);
-      if (xMvt > 20) { this.brokeHorizontalThreshold = true; }
+      let yMvt = Math.abs(this.curYPos - eData.pageY);
+      let xMvt = Math.abs(this.startpoint - eData.pageX);
+      if (xMvt > 20) {
+        this.brokeHorizontalThreshold = true;
+        e.preventDefault();
+      }
       if (!this.brokeHorizontalThreshold) {
         if (xMvt <= 20 && yMvt >= 10 && yMvt > xMvt) {
           this.isDragging = false;
@@ -783,7 +800,7 @@ export default class SlipnSlider {
     }
 
     let currentPos  = ((this.activeSlideIndex * this.slideWidth) + (this.slidePadding * this.activeSlideIndex)) * -1;
-    let movePos     = currentPos - ((this.startpoint - e.pageX) * 0.7);
+    let movePos     = currentPos - ((this.startpoint - eData.pageX) * 0.7);
 
     if (!this.isInfiniteOverride) {
       // Dividing by 4 and multiplying by 0.75 allows a
@@ -809,9 +826,11 @@ export default class SlipnSlider {
    */
   offDrag(e) {
     if (!this.isDragging) { return this; }
+    // if (this.isAndroid) { e.preventDefault(); }
     this.isDragging = false;
     this.stage.style[this.transitionPrefix] = 'all .75s';
-    let travelled = e !== undefined ? this.startpoint - e.pageX : 0;
+    let eData = this.isAndroid ? e.changedTouches[0] : e;
+    let travelled = e !== undefined ? this.startpoint - eData.pageX : 0;
 
     if (Math.abs(travelled) >= this.dragThreshold) {
       if (this.isInfiniteOverride) {
@@ -1044,6 +1063,8 @@ export default class SlipnSlider {
       start = 'touchstart';
       end = 'touchend';
       move = 'touchmove';
+      this.isMobileDevice = true;
+      if ( navigator.userAgent.match(/Android/i) ) { this.isAndroid = true; }
     } else if (window.PointerEvent) {
       start = 'pointerdown';
       end = 'pointerup';
