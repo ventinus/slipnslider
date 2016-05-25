@@ -1,6 +1,7 @@
 // Features to add:
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
+//  currently takes about 7.6ms to tear down and rebuild in chrome
 
 export default class SlipnSlider {
   constructor(element, options) {
@@ -324,18 +325,16 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   setStage() {
-    this.stage = document.createElement(this.stageElement);
-    this.stage.className = 'slipnslider__stage';
+    let stage = document.createElement(this.stageElement);
+    stage.className = 'slipnslider__stage';
     this.slides = this.slider.children;
     this.total = this.slides.length;
 
     for (let i = 0; i < this.total; i++) {
-      let slide = this.slides[0].cloneNode(true);
-      this.slider.removeChild(this.slides[0]);
-      this.stage.appendChild(slide);
+      stage.appendChild(this.slides[0]);
     }
 
-    this.slider.appendChild(this.stage);
+    this.slider.appendChild(stage);
     this.stage = this.slider.children[0];
     this.slides = this.stage.children;
 
@@ -1095,6 +1094,7 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   init() {
+    console.time("init");
     this.determineBrowserEvents()
         .takeUserOptions()
         .parseResponsive()
@@ -1110,6 +1110,7 @@ export default class SlipnSlider {
         .addEventHandlers()
         .enable();
 
+    console.timeEnd("init");
     return this;
   }
 }
