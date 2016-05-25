@@ -36,7 +36,7 @@ Sure is. While there are many slider plugins available with a multitude of confi
 11. prevNavigationCallback: function() { console.log('prev callback'); }
 ⋅⋅- Callback to hook into the previous navigation function
 12. nextNavigationCallback: function() { console.log('next callback'); }
-⋅⋅- Callback to hook into the previous navigation function
+⋅⋅- Callback to hook into the next navigation function
 13. responsive: {}
 ⋅⋅- Allows for customizeable options at certain window widths. Define a key that is the window width min, and the value is an object with any of the key value options defined above. For Example:
 
