@@ -1094,6 +1094,11 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   init() {
+    if (!this.slider) {
+      console.warn("Could not find slider element. Aborting slipnslider initialization.");
+      return this;
+    }
+
     console.time("init");
     this.determineBrowserEvents()
         .takeUserOptions()
@@ -1109,6 +1114,7 @@ export default class SlipnSlider {
         .bindTransitionEvents()
         .addEventHandlers()
         .enable();
+
 
     console.timeEnd("init");
     return this;
