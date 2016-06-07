@@ -95,7 +95,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', 'Run default tasks for the target environment.', ['build']);
 
     grunt.registerTask('build', 'Compile source code and outputs to destination.',
-        ['clean:dest', 'buildMarkup', 'buildStatic', 'buildStyles', 'buildScripts', 'clean:tmp']
+        ['clean:dest', 'buildMarkup', 'buildStatic', 'buildStyles', 'buildScripts', 'clean:tmp', 'copyWeb']
     );
 
     grunt.registerTask('lint', 'Validate code syntax.',
