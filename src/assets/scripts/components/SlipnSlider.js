@@ -2,9 +2,10 @@
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
 //  currently takes about 7.6ms to tear down and rebuild in chrome
+// - add option to not wrap when not infinite so nav btns get disabled at beginning and end
 
 export default class SlipnSlider {
-  constructor(element, options) {
+  constructor(element, options = {}) {
     /**
      * Flag for detecting if slider is enabled
      * @type {Boolean}
@@ -29,8 +30,8 @@ export default class SlipnSlider {
       stageElement: 'div',
       slidePadding: 10,
       slidesPerPage: 1,
-      prevNavigationCallback: function() { console.log('prev callback'); },
-      nextNavigationCallback: function() { console.log('next callback'); },
+      prevNavigationCallback: function(direction) { console.log(`prev callback: going ${diretion} -1`); },
+      nextNavigationCallback: function(direction) { console.log(`next callback: going ${diretion} +1`); },
       responsive: {}
     };
 
@@ -227,7 +228,7 @@ export default class SlipnSlider {
    * @return {SlipnSlider}
    */
   takeUserOptions() {
-    this.options = this.options || {};
+    // TODO: see about using hasOwnProperty
     for (let option in this.optionableProperties) {
       if (this.optionableProperties[option] !== undefined && typeof this.optionableProperties[option] === typeof this.options[option]) {
         this[option] = this.options[option];
@@ -660,9 +661,9 @@ export default class SlipnSlider {
     this.onTransitionStart();
 
     if (direction) {
-      this.nextNavigationCallback();
+      this.nextNavigationCallback(direction);
     } else {
-      this.prevNavigationCallback();
+      this.prevNavigationCallback(direction);
     }
 
     if (direction && this.atLastSlide()) {
