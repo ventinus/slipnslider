@@ -30,8 +30,8 @@ export default class SlipnSlider {
       stageElement: 'div',
       slidePadding: 10,
       slidesPerPage: 1,
-      prevNavigationCallback: function(direction) { console.log(`prev callback: going ${diretion} -1`); },
-      nextNavigationCallback: function(direction) { console.log(`next callback: going ${diretion} +1`); },
+      prevNavigationCallback: function(direction) { console.log(`prev callback: going ${direction} -1`); },
+      nextNavigationCallback: function(direction) { console.log(`next callback: going ${direction} +1`); },
       responsive: {}
     };
 
