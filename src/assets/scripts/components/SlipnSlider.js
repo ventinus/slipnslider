@@ -251,7 +251,7 @@ export default class SlipnSlider {
     let windowWidth = window.innerWidth;
     for (let breakpoint in this.responsive) {
       if (this.responsive.hasOwnProperty(breakpoint)) {
-        breakpoint = parseInt(breakpoint);
+        breakpoint = +breakpoint;
         this.breakpoints.push(breakpoint);
         if (breakpoint < windowWidth) {
           this.currentBreakpoint = breakpoint;
