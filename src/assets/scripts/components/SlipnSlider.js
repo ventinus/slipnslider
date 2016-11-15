@@ -230,10 +230,12 @@ export default class SlipnSlider {
   takeUserOptions() {
     // TODO: see about using hasOwnProperty
     for (let option in this.optionableProperties) {
-      if (this.optionableProperties[option] !== undefined && typeof this.optionableProperties[option] === typeof this.options[option]) {
-        this[option] = this.options[option];
-      } else {
-        this[option] = this.optionableProperties[option];
+      if (this.optionableProperties.hasOwnProperty(option)) {
+        if (this.optionableProperties[option] !== undefined && typeof this.optionableProperties[option] === typeof this.options[option]) {
+          this[option] = this.options[option];
+        } else {
+          this[option] = this.optionableProperties[option];
+        }
       }
     }
 
@@ -248,10 +250,12 @@ export default class SlipnSlider {
   parseResponsive() {
     let windowWidth = window.innerWidth;
     for (let breakpoint in this.responsive) {
-      breakpoint = parseInt(breakpoint);
-      this.breakpoints.push(breakpoint);
-      if (breakpoint < windowWidth) {
-        this.currentBreakpoint = breakpoint;
+      if (this.responsive.hasOwnProperty(breakpoint)) {
+        breakpoint = parseInt(breakpoint);
+        this.breakpoints.push(breakpoint);
+        if (breakpoint < windowWidth) {
+          this.currentBreakpoint = breakpoint;
+        }
       }
     }
 
