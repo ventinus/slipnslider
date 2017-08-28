@@ -2,12 +2,13 @@
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
 //  currently takes about 7.6ms to tear down and rebuild in chrome
+// - add option to not wrap when not infinite so nav btns get disabled at beginning and end
 
 // =========================================================
 // On Initialization functions
 // =========================================================
 
-const SlipnSlider = (element, options) => {
+const SlipnSlider = (element, options = {}) => {
   let props = {
     /**
      * Flag for detecting if slider is enabled
@@ -33,8 +34,8 @@ const SlipnSlider = (element, options) => {
       stageElement: 'div',
       slidePadding: 10,
       slidesPerPage: 1,
-      prevNavigationCallback: () => { console.log('prev callback'); },
-      nextNavigationCallback: () => { console.log('next callback'); },
+      prevNavigationCallback(direction) { console.log(`prev callback: going ${direction}`); },
+      nextNavigationCallback(direction) { console.log(`next callback: going ${direction}`); },
       responsive: {}
     },
     /**
@@ -229,10 +230,13 @@ const SlipnSlider = (element, options) => {
   const takeUserOptions = () => {
     props.options = props.options || {};
     for (let option in props.optionableProperties) {
-      if (props.optionableProperties[option] !== undefined && typeof props.optionableProperties[option] === typeof props.options[option]) {
-        props[option] = props.options[option];
-      } else {
-        props[option] = props.optionableProperties[option];
+      if (props.optionableProperties.hasOwnProperty(option)) {
+
+        if (props.optionableProperties[option] !== undefined && typeof props.optionableProperties[option] === typeof props.options[option]) {
+          props[option] = props.options[option];
+        } else {
+          props[option] = props.optionableProperties[option];
+        }
       }
     }
 
@@ -247,10 +251,12 @@ const SlipnSlider = (element, options) => {
   const parseResponsive = () => {
     let windowWidth = window.innerWidth;
     for (let breakpoint in props.responsive) {
-      breakpoint = parseInt(breakpoint);
-      props.breakpoints.push(breakpoint);
-      if (breakpoint < windowWidth) {
-        props.currentBreakpoint = breakpoint;
+      if (props.responsive.hasOwnProperty(breakpoint)) {
+        breakpoint = +breakpoint;
+        props.breakpoints.push(breakpoint);
+        if (breakpoint < windowWidth) {
+          props.currentBreakpoint = breakpoint;
+        }
       }
     }
 
@@ -655,9 +661,9 @@ const SlipnSlider = (element, options) => {
     onTransitionStart();
 
     if (direction) {
-      props.nextNavigationCallback();
+      props.nextNavigationCallback(direction);
     } else {
-      props.prevNavigationCallback();
+      props.prevNavigationCallback(direction);
     }
 
     if (direction && atLastSlide()) {
