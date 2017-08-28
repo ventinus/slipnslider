@@ -1,4 +1,3 @@
 node_modules/
-build-env.js
-src/assets/vendor/
-web/
+.DS_Store
+npm-debug.log

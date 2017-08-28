@@ -1104,8 +1104,8 @@ const SlipnSlider = (element, options = {}) => {
     return;
   }
 
-  const onNextClickHandler = determineAction.bind(this, true);
-  const onPrevClickHandler = determineAction.bind(this, false);
+  const onNextClickHandler = determineAction.bind(null, true);
+  const onPrevClickHandler = determineAction.bind(null, false);
 
 
   // =========================================================
