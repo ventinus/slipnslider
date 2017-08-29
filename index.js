@@ -374,6 +374,8 @@ const SlipnSlider = (element, options = {}) => {
     return;
   }
 
+
+
   /**
    * Creates the DOM elements with instance-specific class names
    * for dot navigation. Sets active class to current slide and
@@ -381,17 +383,19 @@ const SlipnSlider = (element, options = {}) => {
    * @return {SlipnSlider}
    */
   const createDots = () => {
-    let targetElement = props.slider !== props.dotsContainer ? document.querySelector(props.dotsContainer) : props.dotsContainer;
+    const targetElement = findElement(props.dotsContainer)
 
     props.dotNav = document.createElement('ul');
-    props.dotNav.className = 'slipnslider__dot-nav';
-    for (let i = 0; i < props.dotsCount; i++) { props.dotNav.appendChild(document.createElement('li')); }
+    props.dotNav.className = `${dotNavClass} slipnslider__dot-nav`;
+    for (let i = 0; i < props.dotsCount; i++) {
+      props.dotNav.appendChild(document.createElement('li'));
+    }
     props.navDots = props.dotNav.querySelectorAll('li');
     props.activeDot = props.navDots[props.activeSlideIndex];
     props.activeDot.className = props.dotIsActive;
     targetElement.appendChild(props.dotNav);
 
-    let dispStyle = !props.hasDotNavOverride ? 'none' : '';
+    const dispStyle = !props.hasDotNavOverride ? 'none' : '';
     props.dotNav.style.display = dispStyle;
 
     return;
@@ -409,7 +413,7 @@ const SlipnSlider = (element, options = {}) => {
     if (!props.hasControlsOverride || props.total === 1) {
       return props;
     }
-    let targetElement = props.slider !== props.navContainer ? document.querySelector(props.navContainer) : props.navContainer;
+    const targetElement = findElement(props.dotsContainer)
     let controlsWrapper = document.createElement('div');
     controlsWrapper.className = 'slipnslider__controls';
     props.prevBtn = document.createElement('button');
@@ -963,6 +967,23 @@ const SlipnSlider = (element, options = {}) => {
     addStageTransition();
 
     return;
+  }
+
+  /**
+   * Use for getting dotsContainer and navContainer
+   * @param  {DOM Element or string} el default value is slider, but can be a
+   *                                 DOM node or string to run querySelector by
+   * @return {Object}    DOM node
+   */
+  const findElement = el => {
+    let targetElement
+    if (props.slider === el) {
+      targetElement = el
+    } else {
+      targetElement = el.classList ? el : document.querySelector(el)
+    }
+
+    return targetElement
   }
 
   /**

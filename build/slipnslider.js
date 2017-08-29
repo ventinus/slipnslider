@@ -519,10 +519,10 @@ var SlipnSlider = function SlipnSlider(element) {
    * @return {SlipnSlider}
    */
   var createDots = function createDots() {
-    var targetElement = props.slider !== props.dotsContainer ? document.querySelector(props.dotsContainer) : props.dotsContainer;
+    var targetElement = findElement(props.dotsContainer);
 
     props.dotNav = document.createElement('ul');
-    props.dotNav.className = 'slipnslider__dot-nav';
+    props.dotNav.className = dotNavClass + ' slipnslider__dot-nav';
     for (var i = 0; i < props.dotsCount; i++) {
       props.dotNav.appendChild(document.createElement('li'));
     }
@@ -549,7 +549,7 @@ var SlipnSlider = function SlipnSlider(element) {
     if (!props.hasControlsOverride || props.total === 1) {
       return props;
     }
-    var targetElement = props.slider !== props.navContainer ? document.querySelector(props.navContainer) : props.navContainer;
+    var targetElement = findElement(props.dotsContainer);
     var controlsWrapper = document.createElement('div');
     controlsWrapper.className = 'slipnslider__controls';
     props.prevBtn = document.createElement('button');
@@ -1103,6 +1103,23 @@ var SlipnSlider = function SlipnSlider(element) {
     addStageTransition();
 
     return;
+  };
+
+  /**
+   * Use for getting dotsContainer and navContainer
+   * @param  {DOM Element or string} el default value is slider, but can be a
+   *                                 DOM node or string to run querySelector by
+   * @return {Object}    DOM node
+   */
+  var findElement = function findElement(el) {
+    var targetElement = void 0;
+    if (props.slider === el) {
+      targetElement = el;
+    } else {
+      targetElement = el.classList ? el : document.querySelector(el);
+    }
+
+    return targetElement;
   };
 
   /**

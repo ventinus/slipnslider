@@ -1,6 +1,6 @@
 {
   "name": "slipnslider",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Dependency free performant slider",
   "author": "ventinus",
   "main": "build/slipnslider.js",

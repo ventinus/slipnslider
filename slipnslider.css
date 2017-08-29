@@ -55,38 +55,18 @@
   user-select: none;
 }
 
-.slipnslider__controls {
-  display: inline-block;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
-
-.slipnslider__dot-nav {
-  display: block;
-  position: absolute;
-  left: 0;
-  padding: 0;
-  width: 100%;
-  bottom: 0;
-  text-align: center;
-}
-
-.slipnslider__dot-nav li {
-  background: #CCC;
-  display: inline-block;
-  height: 12px;
-  margin: 2px;
-  width: 12px;
-  vertical-align: middle;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-}
-
-.slipnslider__dot-nav li.slipnslider__active {
-  background: #000;
-  width: 14px;
-  height: 14px;
+.is-visually-hidden {
+  border: 0 !important;
+  clip: rect(1px 1px 1px 1px) !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  height: 1px !important;
+  left: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+  width: 1px !important;
 }
 
 .no-js .slipnslider__stage,
