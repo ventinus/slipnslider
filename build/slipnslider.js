@@ -127,6 +127,78 @@ var asyncGenerator = function () {
   };
 }();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
 // Features to add:
 //  autoplay, slides to show at a time, paging/how they transition (flowing behind
 //  instead of strictly left and right)
@@ -166,10 +238,10 @@ var SlipnSlider = function SlipnSlider(element) {
       slidePadding: 10,
       slidesPerPage: 1,
       prevNavigationCallback: function prevNavigationCallback(direction) {
-        console.log('prev callback: going ' + direction);
+        // console.log(`prev callback: going ${direction}`);
       },
       nextNavigationCallback: function nextNavigationCallback(direction) {
-        console.log('next callback: going ' + direction);
+        // console.log(`next callback: going ${direction}`);
       },
 
       responsive: {}
@@ -522,7 +594,7 @@ var SlipnSlider = function SlipnSlider(element) {
     var targetElement = findElement(props.dotsContainer);
 
     props.dotNav = document.createElement('ul');
-    props.dotNav.className = dotNavClass + ' slipnslider__dot-nav';
+    props.dotNav.className = 'slipnslider__dot-nav';
     for (var i = 0; i < props.dotsCount; i++) {
       props.dotNav.appendChild(document.createElement('li'));
     }
@@ -549,17 +621,22 @@ var SlipnSlider = function SlipnSlider(element) {
     if (!props.hasControlsOverride || props.total === 1) {
       return props;
     }
-    var targetElement = findElement(props.dotsContainer);
+    var targetElement = findElement(props.navContainer);
+
+    var _props$navText = slicedToArray(props.navText, 2),
+        prevText = _props$navText[0],
+        nextText = _props$navText[1];
+
     var controlsWrapper = document.createElement('div');
     controlsWrapper.className = 'slipnslider__controls';
     props.prevBtn = document.createElement('button');
     props.prevBtn.className = 'slipnslider__prev';
     props.prevBtn.type = 'button';
-    props.prevBtn.innerHTML = props.navText[0];
+    props.prevBtn.innerHTML = prevText.length === 0 ? '<span class="is-visually-hidden">previous</span>' : prevText;
     props.nextBtn = document.createElement('button');
     props.nextBtn.className = 'slipnslider__next';
     props.nextBtn.type = 'button';
-    props.nextBtn.innerHTML = props.navText[1];
+    props.nextBtn.innerHTML = nextText.length === 0 ? '<span class="is-visually-hidden">next</span>' : nextText;
     controlsWrapper.appendChild(props.prevBtn);
     controlsWrapper.appendChild(props.nextBtn);
     targetElement.appendChild(controlsWrapper);
@@ -1283,7 +1360,7 @@ var SlipnSlider = function SlipnSlider(element) {
         return;
       }
 
-      console.time("init");
+      // console.time("init");
 
       getTransitionPrefixes();
       determineBrowserEvents();
@@ -1300,7 +1377,7 @@ var SlipnSlider = function SlipnSlider(element) {
       bindTransitionEvents();
       enable();
 
-      console.timeEnd("init");
+      // console.timeEnd("init");
       return;
     },
     enable: enable,
