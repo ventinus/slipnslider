@@ -34,8 +34,12 @@ const SlipnSlider = (element, options = {}) => {
       stageElement: 'div',
       slidePadding: 10,
       slidesPerPage: 1,
-      prevNavigationCallback(direction) { console.log(`prev callback: going ${direction}`); },
-      nextNavigationCallback(direction) { console.log(`next callback: going ${direction}`); },
+      prevNavigationCallback(direction) {
+        // console.log(`prev callback: going ${direction}`);
+      },
+      nextNavigationCallback(direction) {
+        // console.log(`next callback: going ${direction}`);
+      },
       responsive: {}
     },
     /**
@@ -386,7 +390,7 @@ const SlipnSlider = (element, options = {}) => {
     const targetElement = findElement(props.dotsContainer)
 
     props.dotNav = document.createElement('ul');
-    props.dotNav.className = `${dotNavClass} slipnslider__dot-nav`;
+    props.dotNav.className = 'slipnslider__dot-nav';
     for (let i = 0; i < props.dotsCount; i++) {
       props.dotNav.appendChild(document.createElement('li'));
     }
@@ -413,17 +417,19 @@ const SlipnSlider = (element, options = {}) => {
     if (!props.hasControlsOverride || props.total === 1) {
       return props;
     }
-    const targetElement = findElement(props.dotsContainer)
+    const targetElement = findElement(props.navContainer)
+    const [prevText, nextText] = props.navText
+
     let controlsWrapper = document.createElement('div');
     controlsWrapper.className = 'slipnslider__controls';
     props.prevBtn = document.createElement('button');
     props.prevBtn.className = 'slipnslider__prev';
     props.prevBtn.type = 'button';
-    props.prevBtn.innerHTML = props.navText[0];
+    props.prevBtn.innerHTML = prevText.length === 0 ? '<span class="is-visually-hidden">previous</span>' : prevText;
     props.nextBtn = document.createElement('button');
     props.nextBtn.className = 'slipnslider__next';
     props.nextBtn.type = 'button';
-    props.nextBtn.innerHTML = props.navText[1];
+    props.nextBtn.innerHTML = nextText.length === 0 ? '<span class="is-visually-hidden">next</span>' : nextText;
     controlsWrapper.appendChild(props.prevBtn);
     controlsWrapper.appendChild(props.nextBtn);
     targetElement.appendChild(controlsWrapper);
@@ -1144,7 +1150,7 @@ const SlipnSlider = (element, options = {}) => {
         return;
       }
 
-      console.time("init");
+      // console.time("init");
 
       getTransitionPrefixes();
       determineBrowserEvents();
@@ -1162,7 +1168,7 @@ const SlipnSlider = (element, options = {}) => {
       enable();
 
 
-      console.timeEnd("init");
+      // console.timeEnd("init");
       return;
     },
     enable: enable,
