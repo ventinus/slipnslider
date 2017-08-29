@@ -243,6 +243,7 @@ var SlipnSlider = function SlipnSlider(element) {
       nextNavigationCallback: function nextNavigationCallback(direction) {
         // console.log(`next callback: going ${direction}`);
       },
+      dotClickCallback: function dotClickCallback(prevIndex, nextIndex) {},
 
       responsive: {}
     },
@@ -946,12 +947,17 @@ var SlipnSlider = function SlipnSlider(element) {
     if (props.isTransitioning) {
       return;
     }
+
     var dotIndex = Array.prototype.indexOf.call(props.navDots, e.currentTarget);
+
     if (dotIndex === props.activeDotIndex) {
       return;
     }
+
+    props.dotClickCallback(props.activeDotIndex, dotIndex);
     onTransitionStart();
     props.activeDotIndex = props.activeSlideIndex = dotIndex;
+
     if (props.isInfiniteOverride) {
       props.activeSlideIndex += props.slidesPerPage + 1;
     }

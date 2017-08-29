@@ -40,6 +40,9 @@ const SlipnSlider = (element, options = {}) => {
       nextNavigationCallback(direction) {
         // console.log(`next callback: going ${direction}`);
       },
+      dotClickCallback(prevIndex, nextIndex) {
+
+      },
       responsive: {}
     },
     /**
@@ -740,12 +743,17 @@ const SlipnSlider = (element, options = {}) => {
     if (props.isTransitioning) {
       return;
     }
+
     let dotIndex = Array.prototype.indexOf.call(props.navDots, e.currentTarget);
+
     if (dotIndex === props.activeDotIndex) {
       return;
     }
+
+    props.dotClickCallback(props.activeDotIndex, dotIndex)
     onTransitionStart();
     props.activeDotIndex = props.activeSlideIndex = dotIndex;
+
     if (props.isInfiniteOverride) {
       props.activeSlideIndex += props.slidesPerPage + 1;
     }
