@@ -1,13 +1,13 @@
 {
   "name": "slipnslider",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Dependency free performant slider",
   "author": "ventinus",
   "main": "build/slipnslider.js",
   "module": "index",
   "jsnext:main": "index",
   "scripts": {
-    "build": "rm -rf build bundle.js && mkdir build && rollup -c && rollup -f umd -o build/slipnslider.js -- bundle.js && rm bundle.js && uglifyjs build/slipnslider.js -c -m -o build/slipnslider.min.js"
+    "build": "rm -rf build bundle.js && mkdir build && cp slipnslider.css ./build && rollup -c && rollup -f umd -o build/slipnslider.js -- bundle.js && rm bundle.js && uglifyjs build/slipnslider.js -c -m -o build/slipnslider.min.js"
   },
   "repository": {
     "type": "git",
