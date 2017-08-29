@@ -696,37 +696,42 @@ var SlipnSlider = function SlipnSlider(element) {
    * @return {SlipnSlider}
    */
   var disable = function disable() {
-    if (!props.isEnabled) {
-      return;
-    }
-
-    props.isEnabled = false;
-
-    if (props.hasControlsOverride) {
-      props.nextBtn.removeEventListener('click', onNextClickHandler, false);
-      props.prevBtn.removeEventListener('click', onPrevClickHandler, false);
-    }
-
-    if (props.hasDotNavOverride) {
-      for (var i = 0, j = props.navDots.length; i < j; i++) {
-        props.navDots[i].removeEventListener('click', onDotClick, false);
+    var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+    return function () {
+      if (!props.isEnabled) {
+        return;
       }
-    }
 
-    props.stage.removeEventListener(props.pressStart, onDragStart, false);
-    props.stage.removeEventListener('click', onSliderClick, false);
+      if (props.hasControlsOverride) {
+        props.nextBtn.removeEventListener('click', onNextClickHandler, false);
+        props.prevBtn.removeEventListener('click', onPrevClickHandler, false);
+      }
 
-    window.removeEventListener(props.pressMove, onDrag, false);
-    window.removeEventListener(props.pressEnd, offDrag, false);
-    window.removeEventListener('resize', onWindowResize, false);
+      if (props.hasDotNavOverride) {
+        for (var i = 0, j = props.navDots.length; i < j; i++) {
+          props.navDots[i].removeEventListener('click', onDotClick, false);
+        }
+      }
 
-    if (!props.isMobileDevice) {
-      window.removeEventListener('keydown', onKeyDown, false);
-    }
+      props.stage.removeEventListener(props.pressStart, onDragStart, false);
+      props.stage.removeEventListener('click', onSliderClick, false);
 
-    removeCreatedElements();
+      window.removeEventListener(props.pressMove, onDrag, false);
+      window.removeEventListener(props.pressEnd, offDrag, false);
+      window.removeEventListener('resize', onWindowResize, false);
 
-    return;
+      if (!props.isMobileDevice) {
+        window.removeEventListener('keydown', onKeyDown, false);
+      }
+
+      if (deep) {
+        removeCreatedElements();
+      }
+
+      props.isEnabled = false;
+
+      return;
+    };
   };
 
   /**
@@ -1387,7 +1392,8 @@ var SlipnSlider = function SlipnSlider(element) {
       return;
     },
     enable: enable,
-    disable: disable
+    disable: disable(true),
+    lightDisable: disable(false)
   };
 };
 
