@@ -21,11 +21,11 @@ Sure is. While there are many slider plugins available with a multitude of confi
 3. hasControls: `true`
 - Handles whether the prev and next buttons get created and appended
 
-4. navContainer: `'.slipnslider'`
-- Element for appending the prev and next buttons to
+4. navContainer: Slider DOM Element
+- DOM Node for appending the prev and next buttons to (appends ul with li children)
 
-5. dotsContainer: `'.slipnslider'`
-- Element for appending the dots to
+5. dotsContainer: Slider DOM Element
+- DOM Node for appending the dots to
 
 6. navText: `['prev', 'next']`
 - Text/HTML to have rendered inside of the prev and next button tags

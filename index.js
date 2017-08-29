@@ -491,12 +491,10 @@ const SlipnSlider = (element, options = {}) => {
    * intialization of the slider
    * @return {SlipnSlider}
    */
-  const disable = () => {
+  const disable = (deep = false) => () => {
     if (!props.isEnabled) {
       return;
     }
-
-    props.isEnabled = false;
 
     if (props.hasControlsOverride) {
       props.nextBtn.removeEventListener('click', onNextClickHandler, false);
@@ -520,7 +518,11 @@ const SlipnSlider = (element, options = {}) => {
       window.removeEventListener('keydown', onKeyDown, false);
     }
 
-    removeCreatedElements();
+    if (deep) {
+      removeCreatedElements();
+    }
+
+    props.isEnabled = false;
 
     return;
   }
@@ -1179,8 +1181,9 @@ const SlipnSlider = (element, options = {}) => {
       // console.timeEnd("init");
       return;
     },
-    enable: enable,
-    disable: disable
+    enable,
+    disable: disable(true),
+    lightDisable: disable(false)
   }
 }
 
