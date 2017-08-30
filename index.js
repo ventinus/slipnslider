@@ -618,7 +618,7 @@ const SlipnSlider = (element, options = {}) => {
    */
   const rebuildSlider = () => {
     props.activeSlideIndex = props.activeDotIndex = 0;
-    disable();
+    disable(true);
     applyCurrentBreakptProps();
     setStage();
     calcInitialProps();

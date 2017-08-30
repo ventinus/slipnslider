@@ -825,7 +825,7 @@ var SlipnSlider = function SlipnSlider(element) {
    */
   var rebuildSlider = function rebuildSlider() {
     props.activeSlideIndex = props.activeDotIndex = 0;
-    disable();
+    disable(true);
     applyCurrentBreakptProps();
     setStage();
     calcInitialProps();
