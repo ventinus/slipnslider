@@ -13,8 +13,6 @@
 .slipnslider__stage {
   font-size: 0;
   position: relative;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   cursor: -webkit-grab;
   cursor: -o-grab;
   cursor: -ms-grab;
