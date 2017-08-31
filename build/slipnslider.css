@@ -1,0 +1,75 @@
+/***********************************
+
+  SlipnSlider vendor styles
+
+***********************************/
+
+.slipnslider {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.slipnslider__stage {
+  font-size: 0;
+  position: relative;
+  cursor: -webkit-grab;
+  cursor: -o-grab;
+  cursor: -ms-grab;
+  cursor: grab;
+}
+
+.slipnslider__stage > * {
+  display: inline-block;
+  font-size: initial;
+  height: auto;
+  margin: 0;
+  vertical-align: middle;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -webkit-backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.slipnslider__stage > *:first-child {
+  margin-left: 0 !important;
+}
+
+.slipnslider__controls .slipnslider__prev,
+.slipnslider__controls .slipnslider__next,
+.slipnslider__dot-nav > * {
+  cursor: pointer;
+  cursor: hand;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.is-visually-hidden {
+  border: 0 !important;
+  clip: rect(1px 1px 1px 1px) !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  height: 1px !important;
+  left: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+  width: 1px !important;
+}
+
+.no-js .slipnslider__stage,
+.no-js .slipnslider__stage > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block;
+}
