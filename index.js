@@ -491,7 +491,7 @@ const SlipnSlider = (element, options = {}) => {
    * intialization of the slider
    * @return {SlipnSlider}
    */
-  const disable = (deep = false) => () => {
+  const disable = (deep = false) => {
     if (!props.isEnabled) {
       return;
     }
@@ -1182,8 +1182,8 @@ const SlipnSlider = (element, options = {}) => {
       return;
     },
     enable,
-    disable: disable(true),
-    lightDisable: disable(false)
+    disable: disable.bind(null, true),
+    lightDisable: disable.bind(null, false)
   }
 }
 
