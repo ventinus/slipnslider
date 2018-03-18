@@ -434,7 +434,7 @@ var SlipnSlider = function SlipnSlider(element) {
    * and sets the properties accordingly. Verifies that option
    * is one that can be set by the user and checks the typeof
    * the option for proper and desired behaviour.
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var takeUserOptions = function takeUserOptions() {
     props.options = props.options || {};
@@ -448,14 +448,12 @@ var SlipnSlider = function SlipnSlider(element) {
         }
       }
     }
-
-    return;
   };
 
   /**
    * Runs through the breakpoints specified in the responsive property, stores
    * each breakpoint and finds which breakpoint we are currently in.
-   * @return {Slipnslider}
+   * @return {undefined}
    */
   var parseResponsive = function parseResponsive() {
     var windowWidth = window.innerWidth;
@@ -469,19 +467,15 @@ var SlipnSlider = function SlipnSlider(element) {
       }
     }
 
-    if (props.breakpoints.length === 0) {
-      return;
-    }
+    if (props.breakpoints.length === 0) return;
 
     applyCurrentBreakptProps();
-
-    return;
   };
 
   /**
    * Overwrites any defaults or options set with the options
    * specified for the current breakpoint.
-   * @return {Slipnslider}
+   * @return {undefined}
    */
   var applyCurrentBreakptProps = function applyCurrentBreakptProps() {
     for (var item in props.responsive[props.currentBreakpoint]) {
@@ -489,8 +483,6 @@ var SlipnSlider = function SlipnSlider(element) {
         props[item] = props.responsive[props.currentBreakpoint][item];
       }
     }
-
-    return;
   };
 
   /**
@@ -499,12 +491,10 @@ var SlipnSlider = function SlipnSlider(element) {
    * oh so pleasurable infinite feel. Updates the values
    * of the slide elements, total count, percent width,
    * and sets the activeSlideIndex to 1.
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var setupInfiniteSlider = function setupInfiniteSlider() {
-    if (!props.isInfiniteOverride) {
-      return;
-    }
+    if (!props.isInfiniteOverride) return;
 
     var times = props.slidesPerPage + 1;
     for (var i = 0; i < times; i++) {
@@ -531,15 +521,13 @@ var SlipnSlider = function SlipnSlider(element) {
     // Recache the dots
     props.navDots = props.dotNav.children;
     props.dotsCount = props.navDots.length;
-
-    return;
   };
 
   /**
    * Wraps the slides with the stage and appends it
    * to the slider. Updates the values of slide elements,
    * total count, percentage, and sets the width of the slides.
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var setStage = function setStage() {
     var stage = document.createElement(props.stageElement);
@@ -554,20 +542,17 @@ var SlipnSlider = function SlipnSlider(element) {
     props.slider.appendChild(stage);
     props.stage = props.slider.children[0];
     props.slides = props.stage.children;
-
-    return;
   };
 
   /**
    * Checks if there are enough slides for the desired setup
    * to prevent odd and unwanted behaviour
-   * @return {Slipnslider}
+   * @return {undefined}
    */
   var calcInitialProps = function calcInitialProps() {
     // Dont allow slides per page to exceed the total amount of slides
-    if (props.slidesPerPage > props.total) {
-      props.slidesPerPage = props.total;
-    }
+    if (props.slidesPerPage > props.total) props.slidesPerPage = props.total;
+
     props.dotsCount = props.total - (props.slidesPerPage - 1);
 
     // Disallow nav and infinite becaause there is nowhere to go
@@ -575,30 +560,29 @@ var SlipnSlider = function SlipnSlider(element) {
       props.hasDotNavOverride = false;
       props.hasControlsOverride = false;
       props.isInfiniteOverride = false;
-      return;
     } else {
       props.hasDotNavOverride = props.hasDotNav;
       props.hasControlsOverride = props.hasControls;
       props.isInfiniteOverride = props.isInfinite;
     }
-
-    return;
   };
 
   /**
    * Creates the DOM elements with instance-specific class names
    * for dot navigation. Sets active class to current slide and
    * appends dotNav to the slider
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var createDots = function createDots() {
     var targetElement = findElement(props.dotsContainer);
 
     props.dotNav = document.createElement('ul');
     props.dotNav.className = 'slipnslider__dot-nav';
+
     for (var i = 0; i < props.dotsCount; i++) {
       props.dotNav.appendChild(document.createElement('li'));
     }
+
     props.navDots = props.dotNav.querySelectorAll('li');
     props.activeDot = props.navDots[props.activeSlideIndex];
     props.activeDot.className = props.dotIsActive;
@@ -606,8 +590,6 @@ var SlipnSlider = function SlipnSlider(element) {
 
     var dispStyle = !props.hasDotNavOverride ? 'none' : '';
     props.dotNav.style.display = dispStyle;
-
-    return;
   };
 
   /**
@@ -616,12 +598,13 @@ var SlipnSlider = function SlipnSlider(element) {
    * wrapping element and appends the prev and next
    * buttons as children and caches them as properties
    * of the slider.
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var createControls = function createControls() {
     if (!props.hasControlsOverride || props.total === 1) {
       return props;
     }
+
     var targetElement = findElement(props.navContainer);
 
     var _props$navText = slicedToArray(props.navText, 2),
@@ -641,18 +624,14 @@ var SlipnSlider = function SlipnSlider(element) {
     controlsWrapper.appendChild(props.prevBtn);
     controlsWrapper.appendChild(props.nextBtn);
     targetElement.appendChild(controlsWrapper);
-
-    return;
   };
 
   /**
    * Enables the slider and adds the event listeners
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var enable = function enable() {
-    if (props.isEnabled) {
-      return;
-    }
+    if (props.isEnabled) return;
 
     props.isEnabled = true;
 
@@ -660,9 +639,7 @@ var SlipnSlider = function SlipnSlider(element) {
     // any other slides to slide to
     window.addEventListener('resize', onWindowResize, false);
 
-    if (props.dotsCount <= 1) {
-      return;
-    }
+    if (props.dotsCount <= 1) return;
 
     if (props.hasControlsOverride) {
       props.nextBtn.addEventListener('click', onNextClickHandler, false);
@@ -685,22 +662,18 @@ var SlipnSlider = function SlipnSlider(element) {
     if (!props.isMobileDevice) {
       window.addEventListener('keydown', onKeyDown, false);
     }
-
-    return;
   };
 
   /**
    * Disables the slider by removing the event listeners
    * and restores the slider to initial state before
    * intialization of the slider
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var disable = function disable() {
     var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-    if (!props.isEnabled) {
-      return;
-    }
+    if (!props.isEnabled) return;
 
     if (props.hasControlsOverride) {
       props.nextBtn.removeEventListener('click', onNextClickHandler, false);
@@ -724,19 +697,15 @@ var SlipnSlider = function SlipnSlider(element) {
       window.removeEventListener('keydown', onKeyDown, false);
     }
 
-    if (deep) {
-      removeCreatedElements();
-    }
+    if (deep) removeCreatedElements();
 
     props.isEnabled = false;
-
-    return;
   };
 
   /**
    * Removes all the created elements from initialization
    * and restores intial states.
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var removeCreatedElements = function removeCreatedElements() {
     if (props.hasControlsOverride) {
@@ -768,7 +737,6 @@ var SlipnSlider = function SlipnSlider(element) {
 
     props.slider.removeChild(props.stage);
     props.slider.display = 'none';
-    return;
   };
 
   // =========================================================
@@ -779,7 +747,7 @@ var SlipnSlider = function SlipnSlider(element) {
    * Ensures to preventDefault when the slides are anchor tags and
    * the slider had been dragged and released while still above the slider
    * @param  {Object} e Event click data
-   * @return {Slipnslider}
+   * @return {undefined}
    */
   var onSliderClick = function onSliderClick(e) {
     if (props.wasDragged) {
@@ -787,20 +755,17 @@ var SlipnSlider = function SlipnSlider(element) {
     }
 
     props.wasDragged = false;
-
-    return;
   };
 
   /**
    * Checks for when the user enters a different breakpoint
    * and decides to rebuild the slider
-   * @return {Slipnslider}
+   * @return {undefined}
    */
   var onWindowResize = function onWindowResize(e) {
     defineSizes();
-    if (props.breakpoints.length === 0) {
-      return;
-    }
+
+    if (props.breakpoints.length === 0) return;
 
     var currentBreakIndex = props.breakpoints.indexOf(props.currentBreakpoint);
     var windowWidth = window.innerWidth;
@@ -812,15 +777,13 @@ var SlipnSlider = function SlipnSlider(element) {
       props.currentBreakpoint = props.breakpoints[currentBreakIndex - 1];
       rebuildSlider();
     }
-
-    return;
   };
 
   /**
    * Disables and resets current slide and dot indices back
    * to the beginning and runs most of the init functions
    * except for the parsing options function
-   * @return {Slipnslider}
+   * @return {undefined}
    */
   var rebuildSlider = function rebuildSlider() {
     props.activeSlideIndex = props.activeDotIndex = 0;
@@ -836,14 +799,12 @@ var SlipnSlider = function SlipnSlider(element) {
     addStageTransition();
     bindTransitionEvents();
     enable();
-
-    return;
   };
 
   /**
    * Sets the width of the slider stage as well as
    * the contained slides
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var defineSizes = function defineSizes() {
     removeStageTransition();
@@ -862,7 +823,6 @@ var SlipnSlider = function SlipnSlider(element) {
 
     navigateToSlide();
     addStageTransition();
-    return;
   };
 
   /**
@@ -872,12 +832,10 @@ var SlipnSlider = function SlipnSlider(element) {
    * based on value of direction.
    * @param  {Boolean} direction True navigates forward and False navigates backwards
    * @param  {Event Obj} e       Optional event data
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var determineAction = function determineAction(direction, e) {
-    if (props.isTransitioning) {
-      return;
-    }
+    if (props.isTransitioning) return;
 
     onTransitionStart();
 
@@ -914,20 +872,17 @@ var SlipnSlider = function SlipnSlider(element) {
     }
 
     navigateToSlide();
-
-    return;
   };
 
   /**
    * Action to execute when left and right arrows are
    * pressed for navigation.
    * @param  {Event Obj} e Event data for the keydown event
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var onKeyDown = function onKeyDown(e) {
-    if (e.srcElement.localName !== 'body') {
-      return;
-    }
+    if (e.srcElement.localName !== 'body') return;
+
     // might want to have a debounce to limit calls but behaves
     // as anticipated and isnt too overloading
     if (event.keyCode === 37) {
@@ -935,8 +890,6 @@ var SlipnSlider = function SlipnSlider(element) {
     } else if (e.keyCode === 39) {
       determineAction(true);
     }
-
-    return;
   };
 
   /**
@@ -944,19 +897,15 @@ var SlipnSlider = function SlipnSlider(element) {
    * index number of the clicked dot. Sets the activeSlideIndex
    * to the target slide index.
    * @param  {Event Obj} e Event click data
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var onDotClick = function onDotClick(e) {
     e.preventDefault();
-    if (props.isTransitioning) {
-      return;
-    }
+    if (props.isTransitioning) return;
 
     var dotIndex = Array.prototype.indexOf.call(props.navDots, e.currentTarget);
 
-    if (dotIndex === props.activeDotIndex) {
-      return;
-    }
+    if (dotIndex === props.activeDotIndex) return;
 
     props.dotClickCallback(props.activeDotIndex, dotIndex);
     onTransitionStart();
@@ -967,8 +916,6 @@ var SlipnSlider = function SlipnSlider(element) {
     }
 
     navigateToSlide();
-
-    return;
   };
 
   /**
@@ -976,12 +923,10 @@ var SlipnSlider = function SlipnSlider(element) {
    * current x coordinate and the y coordinate of device is a touch device
    * so that scrolling is still possible.
    * @param  {Event Obj} e Event touch/click data
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var onDragStart = function onDragStart(e) {
-    if (props.isTransitioning) {
-      return;
-    }
+    if (props.isTransitioning) return;
 
     removeStageTransition();
     props.isDragging = true;
@@ -994,8 +939,6 @@ var SlipnSlider = function SlipnSlider(element) {
     }
 
     props.startpoint = eData.pageX;
-
-    return;
   };
 
   /**
@@ -1004,12 +947,11 @@ var SlipnSlider = function SlipnSlider(element) {
    * from moving beyond the first and last slide if not
    * in infinite mode.
    * @param  {Event Obj} e Event Drag data
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var onDrag = function onDrag(e) {
-    if (props.isTransitioning || !props.isDragging) {
-      return;
-    }
+    if (props.isTransitioning || !props.isDragging) return;
+
     var eData = props.isAndroid ? e.changedTouches[0] : e;
     // flag for preventing default click event when slides are anchor tags
     props.wasDragged = true;
@@ -1047,8 +989,6 @@ var SlipnSlider = function SlipnSlider(element) {
     }
 
     props.stage.style[props.transformPrefix] = 'translate3d(' + movePos + 'px, 0, 0)';
-
-    return;
   };
 
   /**
@@ -1056,12 +996,11 @@ var SlipnSlider = function SlipnSlider(element) {
    * if and which slide to move to based on the ending
    * x coordinate and the startpoint
    * @param  {Event Obj} e Event data from touchup/mouseup
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var offDrag = function offDrag(e) {
-    if (!props.isDragging) {
-      return;
-    }
+    if (!props.isDragging) return;
+
     // if (props.isAndroid) { e.preventDefault(); }
     props.isDragging = false;
     props.stage.style[props.transitionPrefix] = 'all .75s';
@@ -1087,40 +1026,35 @@ var SlipnSlider = function SlipnSlider(element) {
     } else {
       navigateToSlide();
     }
-
-    return;
   };
 
   /**
    * Sets isTransitioning flag to true to disable
    * user interaction
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var onTransitionStart = function onTransitionStart() {
     props.isTransitioning = true;
-    return;
   };
 
   /**
    * Listener for resetting the isTransitioning
    * flag to false after slider is finished making
    * its' way to the target slide
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var onTransitionEnd = function onTransitionEnd() {
     props.isTransitioning = false;
     if (props.isInfiniteOverride) {
       checkForSlideSwap();
     }
-
-    return;
   };
 
   /**
    * Binds the transition end event to the stage and executes an
    * optional callback function
    * @param  {Function} callback Optional callback to execute on transition completion
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var bindTransitionEvents = function bindTransitionEvents(callback) {
     if (props.transitionEndPrefix) {
@@ -1131,8 +1065,6 @@ var SlipnSlider = function SlipnSlider(element) {
         onTransitionEnd();
       }, false);
     }
-
-    return;
   };
 
   // =========================================================
@@ -1144,7 +1076,7 @@ var SlipnSlider = function SlipnSlider(element) {
    * to move to the current activeSlideIndex. If there
    * is a dotNav, updates the classes of the previous active
    * dot and the new one.
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var navigateToSlide = function navigateToSlide() {
     var moveTo = props.activeSlideIndex * props.slideBy;
@@ -1155,15 +1087,13 @@ var SlipnSlider = function SlipnSlider(element) {
       props.activeDot = props.navDots[props.activeDotIndex];
       props.activeDot.className = props.dotIsActive;
     }
-
-    return;
   };
 
   /**
    * Called on isInfinite mode to see if current
    * slide is a cloned one. If so, switches to its
    * uncloned brother
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var checkForSlideSwap = function checkForSlideSwap() {
     if (props.activeDotIndex > 0 && props.activeSlideIndex <= props.slidesPerPage) {
@@ -1171,7 +1101,6 @@ var SlipnSlider = function SlipnSlider(element) {
     } else if (props.activeDotIndex === 0 && props.activeSlideIndex >= props.total - props.slidesPerPage - 1) {
       swapSlides(false);
     }
-    return;
   };
 
   /**
@@ -1180,7 +1109,7 @@ var SlipnSlider = function SlipnSlider(element) {
    * removes the transition time, navigates to the new slide,
    * and restores transition time.
    * @param  {Boolean} direction True navigates to last uncloned slide, false to first uncloned slide
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var swapSlides = function swapSlides(direction) {
     var slidesPerPageShift = props.slidesPerPage + 1;
@@ -1188,8 +1117,6 @@ var SlipnSlider = function SlipnSlider(element) {
     removeStageTransition();
     navigateToSlide();
     addStageTransition();
-
-    return;
   };
 
   /**
@@ -1211,23 +1138,21 @@ var SlipnSlider = function SlipnSlider(element) {
 
   /**
    * Sets the stage transition to 0 seconds
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var removeStageTransition = function removeStageTransition() {
     props.stage.style[props.transitionPrefix] = 'all 0s';
-    return;
   };
 
   /**
    * Sets stage transition to default value after 1ms
    * timeout so that there is a delay when chaining
-   * @return {SlipnSlider}
+   * @return {undefined}
    */
   var addStageTransition = function addStageTransition() {
     setTimeout(function () {
       props.stage.style[props.transitionPrefix] = 'all .75s';
     }, 1);
-    return;
   };
 
   /**
@@ -1252,7 +1177,6 @@ var SlipnSlider = function SlipnSlider(element) {
    * @return {String} transitionend prefix for current browser
    */
   var transitionEndEvent = function transitionEndEvent() {
-    var t = void 0;
     var el = document.createElement('fakeelement');
     var transitions = {
       'transition': 'transitionend',
@@ -1261,7 +1185,7 @@ var SlipnSlider = function SlipnSlider(element) {
       'WebkitTransition': 'webkitTransitionEnd'
     };
 
-    for (t in transitions) {
+    for (var t in transitions) {
       if (el.style[t] !== undefined) {
         return transitions[t];
       }
@@ -1274,7 +1198,6 @@ var SlipnSlider = function SlipnSlider(element) {
    * @return {String} Transition Prefix
    */
   var transitionPrefix = function transitionPrefix() {
-    var t = void 0;
     var el = document.createElement('fakeelement');
     var transitions = {
       'transition': 'transition',
@@ -1283,7 +1206,7 @@ var SlipnSlider = function SlipnSlider(element) {
       'WebkitTransition': 'webkitTransition'
     };
 
-    for (t in transitions) {
+    for (var t in transitions) {
       if (el.style[t] !== undefined) {
         return transitions[t];
       }
@@ -1296,7 +1219,6 @@ var SlipnSlider = function SlipnSlider(element) {
    * @return {String} Transform Prefix
    */
   var transformPrefix = function transformPrefix() {
-    var t = void 0;
     var el = document.createElement('fakeelement');
     var transforms = {
       'transform': 'transform',
@@ -1305,7 +1227,7 @@ var SlipnSlider = function SlipnSlider(element) {
       'WebkitTransform': 'webkitTransform'
     };
 
-    for (t in transforms) {
+    for (var t in transforms) {
       if (el.style[t] !== undefined) {
         return transforms[t];
       }
@@ -1341,15 +1263,12 @@ var SlipnSlider = function SlipnSlider(element) {
     props.pressStart = start;
     props.pressEnd = end;
     props.pressMove = move;
-
-    return;
   };
 
   var getTransitionPrefixes = function getTransitionPrefixes() {
     props.transitionEndPrefix = transitionEndEvent();
     props.transitionPrefix = transitionPrefix();
     props.transformPrefix = transformPrefix();
-    return;
   };
 
   var onNextClickHandler = determineAction.bind(null, true);
@@ -1362,7 +1281,7 @@ var SlipnSlider = function SlipnSlider(element) {
     /**
      * Initialization function for setting up
      * and enabling the slider
-     * @return {SlipnSlider}
+     * @return {undefined}
      */
     init: function init() {
       if (!props.slider) {
@@ -1386,9 +1305,7 @@ var SlipnSlider = function SlipnSlider(element) {
       addStageTransition();
       bindTransitionEvents();
       enable();
-
       // console.timeEnd("init");
-      return;
     },
     enable: enable,
     disable: disable.bind(null, true),
